@@ -1,3 +1,5 @@
-# Negative Nancy's Video Compiler
+# Nancy Says
 
-a program to generate negative nancy videos from a video script file!
+Negative Nancy's video compiler.
+
+A program to generate Negative Nancy videos from video script files.
