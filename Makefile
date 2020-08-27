@@ -1,5 +1,5 @@
 CC          := cc
-CFLAGS      := -Wall -Werror -Wpedantic -ansi -O3 -g
+CFLAGS      := -Wall -Wpedantic -ansi -O3 -g
 BIN         := nnvc
 BUILD_DIR   := build
 SOURCE_DIR  := src
@@ -16,13 +16,17 @@ $(BUILD_DIR):
 
 .PHONY: clean
 .PHONY: debug
+.PHONY: test
 .PHONY: install
 
 clean:
 	rm -rf $(BUILD_DIR)
 
 debug: $(TARGET)
-	gdb -ex run -- ./$(TARGET)
+	gdb -ex run --arg ./$(TARGET) -D examples/test.vs
+
+test: $(TARGET)
+	gdb -ex run --arg ./$(TARGET) -DT
 
 install: $(TARGET)
 	install $(TARGET) $(INSTALL_DIR)
