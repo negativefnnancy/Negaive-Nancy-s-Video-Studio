@@ -15,7 +15,6 @@
  * to a script. */
 
 /* program use mode */
-
 typedef enum app_mode_t {
 
     REALTIME, /* preview the video real time via the window manager */
@@ -25,16 +24,14 @@ typedef enum app_mode_t {
 } app_mode_t;
 
 /* external entry points */
-
-int entry_realtime ();
-int entry_export (char *export_path);
+int entry_realtime (char *script_path);
+int entry_export (char *script_path, char *export_path);
 int entry_test ();
 
 /* print command line usage */
-
 void usage (FILE *stream, char *command) {
 
-    fprintf (stream, "Usage: %s [-hDT] [-o output.mp4] script.vs\n", command);
+    fprintf (stream, "Usage: %s [-hDT] [-o output.mp4] [script.vs]\n", command);
     fputs ("Options:\n",                                                   stream); 
     fputs ("\t-o output.mp4  render to video file instead of on screen\n", stream);
     fputs ("\t-h             show this usage\n",                           stream);
@@ -43,7 +40,6 @@ void usage (FILE *stream, char *command) {
 }
 
 /* main entry point */
-
 int main (int argc, char **argv) {
 
     app_mode_t app_mode = REALTIME;
@@ -54,7 +50,6 @@ int main (int argc, char **argv) {
     puts ("Hewwo!!!:'3");
 
     /* parse commad line arguments */
-
     while ((opt = getopt (argc, argv, "ho:DT")) != -1) {
         
         switch (opt) {
@@ -82,19 +77,11 @@ int main (int argc, char **argv) {
         }
     }
 
-    /* get the script file to read */
-    
-    if (optind >= argc) {
-
-        fputs ("What script file to read? o:\n", stderr);
-        usage (stderr, argv[0]);
-        exit (EXIT_FAILURE);
-
-    } else
+    /* get the script file to read if given */
+    if (optind < argc)
         script_path = argv[optind];
 
     /* debug info */
-
     if (DEBUG) {
 
         char *mode_string;
@@ -120,14 +107,13 @@ int main (int argc, char **argv) {
     }
 
     /* branch to entry point for the selected app mode */
-
     switch (app_mode) {
 
         case REALTIME:
-            return entry_realtime ();
+            return entry_realtime (script_path);
 
         case EXPORT:
-            return entry_export (export_path);
+            return entry_export (script_path, export_path);
 
         case TEST:
             return entry_test ();

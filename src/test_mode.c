@@ -3,7 +3,6 @@
 #include <stdio.h>
 
 /* test mode is where tests are performed to track bugs and stuff */
-
 int entry_test () {
 
     puts ("Runnin' the tests...");
