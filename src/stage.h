@@ -31,7 +31,7 @@ typedef struct body_t {
 } body_t;
 
 /* integrate the state of the body for the next frame */
-void integrate_body (body_t *body);
+void integrate_body (body_t *body, double delta_time);
 
 /* a force causes an exchange in momentum between two bodies */
 
@@ -79,7 +79,7 @@ void remove_all_forces    (stage_t *stage);
 void draw_stage (stage_t *stage, cairo_t *cairo);
 
 /* advance the state of a stage to the next frame */
-void advance_stage (stage_t *stage);
+void advance_stage (stage_t *stage, double delta_time);
 
 /* TODO: process a single audio frame */
 

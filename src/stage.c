@@ -5,20 +5,27 @@ void draw_drawable (drawable_t *drawable, cairo_t *cairo) {
     /* TODO: polymorphic drawable types */
 
     /* TODO: this is just test stuff lol */
-	/*cairo_rectangle (cairo, 0, 0, width / 2, height / 2);
-	cairo_set_source_rgba (cairo, width, 0, 0, 0.80 * height);
+	cairo_rectangle (cairo, -0.05, -0.05, 0.1, 0.1);
+	cairo_set_source_rgb (cairo, 0, 1, 0);
 	cairo_fill (cairo);
-    */
 }
 
-void integrate_body (body_t *body) {
+void integrate_body (body_t *body, double delta_time) {
+
+    /* assuming acceleration has already been calculated elsewhere */
+
+    cairo_matrix_t scaled_velocity     = body->velocity;
+    cairo_matrix_t scaled_acceleration = body->acceleration;
+
+/*
+    cairo_matrix_scalar_multiply (&(body->velocity),     delta_time);
+    cairo_matrix_scalar_multiply (&(body->acceleration), delta_time);
+    */
 
     /* TODO: do better than this forward euler integration */
-
-    cairo_matrix_multiply (body->position, body->position, &(body->velocity));
-
-    /* assuming acceleration has already been calculated */
-    cairo_matrix_multiply (&(body->velocity), &(body->velocity), &(body->acceleration));
+    cairo_matrix_multiply (body->position,    body->position,    &scaled_velocity);
+/*    cairo_matrix_multiply (&(body->velocity), &(body->velocity), &scaled_acceleration);
+*/
 }
 
 void add_drawable (stage_t *stage, drawable_t *drawable) {
@@ -86,9 +93,7 @@ void draw_stage (stage_t *stage, cairo_t *cairo) {
     cairo_translate (cairo, width / 2, half_height);
     cairo_scale     (cairo, half_height, half_height);
 
-    /* TODO: this is just example code lol */
-
-	/* Drawing code goes here */
+    /* TODO: remove this temporary drawing stuff */
 	cairo_set_source_rgb (cairo, 1, 0, 0);
 	cairo_move_to (cairo, -1, -1);
 	cairo_line_to (cairo, 1, 1);
@@ -97,26 +102,20 @@ void draw_stage (stage_t *stage, cairo_t *cairo) {
 	cairo_set_line_width (cairo, 0.2);
 	cairo_stroke (cairo);
 
-/*
-	cairo_rectangle (cairo, 0, 0, width / 2, height / 2);
-	cairo_set_source_rgba (cairo, width, 0, 0, 0.80 * height);
-	cairo_fill (cairo);
-
-	cairo_rectangle (cairo, 0, 0.5 * height, 0.5 * width, 0.5 * height);
-	cairo_set_source_rgba (cairo, 0, 1 * height, 0, 0.60);
-	cairo_fill (cairo);
-
-	cairo_rectangle (cairo, 0.5 * width, 0, 0.5 * width, 0.5 * height);
-	cairo_set_source_rgba (cairo, 0, 0, width, 0.40 * height);
-	cairo_fill (cairo);
-    */
-
     /* draw all the drawables */
-    for (i = 0; i < stage->n_drawables; i++)
-        draw_drawable (stage->drawables[i], cairo);
+    for (i = 0; i < stage->n_drawables; i++) {
+
+        drawable_t *drawable = stage->drawables[i];
+
+        /* transform by the transformation of each drawables */
+        cairo_save (cairo);
+        cairo_transform (cairo, &(drawable->transformation));
+        draw_drawable (drawable, cairo);
+        cairo_restore (cairo);
+    }
 }
 
-void advance_stage (stage_t *stage) {
+void advance_stage (stage_t *stage, double delta_time) {
 
     int i;
 
@@ -125,7 +124,7 @@ void advance_stage (stage_t *stage) {
 
     /* integrate all the bodies */
     for (i = 0; i < stage->n_bodies; i++)
-        integrate_body (stage->bodies[i]);
+        integrate_body (stage->bodies[i], delta_time);
 }
 
 stage_t *create_stage () {

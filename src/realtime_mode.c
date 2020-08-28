@@ -14,6 +14,8 @@ int entry_realtime (char *script_path) {
 
     /* nnvs stuff */
     stage_t *stage;
+    drawable_t drawable_1;
+    body_t body_1;
 
     /* sdl stuff */
     SDL_Window *window;
@@ -28,6 +30,13 @@ int entry_realtime (char *script_path) {
 
     /* setup the stage */
     stage = create_stage ();
+    body_1.position = &(drawable_1.transformation);
+    cairo_matrix_init_identity  (&(drawable_1.transformation));
+    cairo_matrix_init_rotate (&(body_1.velocity), 0.01);
+    cairo_matrix_translate (&(body_1.velocity), 0.01, 0);
+    cairo_matrix_init_identity  (&(body_1.acceleration));
+    add_drawable (stage, &drawable_1);
+    add_body (stage, &body_1);
 
     /* initialize sdl and create a window and surface */
 
@@ -77,7 +86,8 @@ int entry_realtime (char *script_path) {
         SDL_UpdateWindowSurface (window);
 
         /* prepare the stage for the next frame */
-        advance_stage (stage);
+        /* TODO: proper delta time */
+        advance_stage (stage, 1000 / 60);
 
         /* TODO: some sort of proper vsync mechanism ?? */
         SDL_Delay (1000 / 60);

@@ -56,3 +56,13 @@ void remove_array_item (void **array, size_t *n_items, void *item) {
         /* shift back all the items after the removed item */
         array[i] = array[i + 1];
 }
+
+void cairo_matrix_scalar_multiply (cairo_matrix_t *matrix, double scalar) {
+
+    matrix->xx *= scalar;
+    matrix->yx *= scalar;
+    matrix->xy *= scalar;
+    matrix->yy *= scalar;
+    matrix->x0 *= scalar;
+    matrix->y0 *= scalar;
+}
