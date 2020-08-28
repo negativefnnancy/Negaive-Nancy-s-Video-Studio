@@ -56,6 +56,14 @@ void remove_all_forces (stage_t *stage) {
     stage->n_forces = 0;
 }
 
+void draw_stage (stage_t *stage) {
+
+}
+
+void advance_stage (stage_t *stage) {
+
+}
+
 stage_t *create_stage () {
 
     stage_t *stage   = (stage_t *)     calloc (1, sizeof (stage_t));

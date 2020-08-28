@@ -1,8 +1,10 @@
-# Nancy Says
+# Negative Nancy's Video Studio
 
-**Nancy Says** is Negative Nancy's *video compiler*.
+Negative Nancy's live video production software!
 
-It's a program to generate Negative Nancy videos from video script files!
+It's the software Negative Nancy uses to create her Youtube videos and streams!
+
+_NOTE: this is super ultra pre-alpha right now!! none of this is reliable_
 
 _TODO: script and gif example_
 
@@ -12,7 +14,7 @@ You'll need... _TODO_
 
 ## Build and Install
 
-Building produces the binary `build/nnvc` which is the video compiler!
+Building produces the binary `build/nnvs` which is the video compiler!
 To simply build it, just `cd` to the root of the repository and do this:
 
 ```bash
@@ -42,7 +44,7 @@ make clean
 
 For a more complete manual and tutorials, see the wiki! _TODO: wiki, and link here_
 
-For the complete reference of command line usage, see the man page at `man nnvc`!
+For the complete reference of command line usage, see the man page at `man nnvs`!
 
 First create a video script file named `my_script.vs` like this:
 
@@ -53,11 +55,11 @@ TODO
 To preview this script before outputting it to a video, do this:
 
 ```bash
-nnvc my_script.vs
+nnvs my_script.vs
 ```
 
 When you like it and want to render it into a video, do this:
 
 ```bash
-nnvc my_script.vs -o my_video.mp4
+nnvs my_script.vs -o my_video.mp4
 ```

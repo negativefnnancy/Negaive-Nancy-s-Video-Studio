@@ -1,7 +1,7 @@
 CC          := cc
 CFLAGS      := -Wall -Wpedantic -ansi -O3 -g
 LDFLAGS     := $(shell pkg-config --cflags --libs sdl2)
-BIN         := nnvc
+BIN         := nnvs
 BUILD_DIR   := build
 SOURCE_DIR  := src
 INSTALL_DIR := /usr/bin

@@ -71,6 +71,14 @@ void remove_all_drawables (stage_t *stage);
 void remove_all_bodies    (stage_t *stage);
 void remove_all_forces    (stage_t *stage);
 
+/* draw the current state of a stage */
+void draw_stage (stage_t *stage);
+
+/* advance the state of a stage to the next frame */
+void advance_stage (stage_t *stage);
+
+/* TODO: process a single audio frame */
+
 /* instantiate a stage */
 stage_t *create_stage ();
 

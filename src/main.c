@@ -4,7 +4,7 @@
 
 #include "util.h"
 
-/* Nancy Says: Negative Nancy's video compiler!
+/* Negative Nancy's Video Studio
  * 
  * Concepts:
  * 
@@ -13,6 +13,15 @@
  *
  * The _director_ is the mechanism that updates the stage over time according
  * to a script. */
+
+/* TODO:
+ * instead of selecting a mode, there are three output modes, and any
+ * cobination of them can be selected:
+ * - realtime playback in a window mode, 
+ * - encode to a video file mode,
+ * - stream to video server mode
+ *
+ */
 
 /* program use mode */
 typedef enum app_mode_t {
