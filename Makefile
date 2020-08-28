@@ -9,7 +9,7 @@ INSTALL_DIR := /usr/bin
 SOURCE      := $(SOURCE_DIR)/*.c
 TARGET      := $(BUILD_DIR)/$(BIN)
 
-$(TARGET): $(BUILD_DIR) $(SOURCE)
+$(TARGET): $(BUILD_DIR) $(SOURCE_DIR)/*
 	$(CC) $(CFLAGS) $(SOURCE) -o $(TARGET) $(LDFLAGS)
 
 $(BUILD_DIR):
