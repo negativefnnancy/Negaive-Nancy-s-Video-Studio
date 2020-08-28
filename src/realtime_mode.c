@@ -76,6 +76,9 @@ int entry_realtime (char *script_path) {
         /* TODO: do double buffering? */
         SDL_UpdateWindowSurface (window);
 
+        /* prepare the stage for the next frame */
+        advance_stage (stage);
+
         /* TODO: some sort of proper vsync mechanism ?? */
         SDL_Delay (1000 / 60);
     }

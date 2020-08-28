@@ -16,6 +16,9 @@ typedef struct drawable_t {
     
 } drawable_t;
 
+/* draw a drawable in its current state */
+void draw_drawable (drawable_t *drawable, cairo_t *cairo);
+
 /* a body is a physical entity whose position is integrated over time */
 
 typedef struct body_t {

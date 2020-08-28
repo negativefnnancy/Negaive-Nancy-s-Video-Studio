@@ -1,5 +1,10 @@
 #include "stage.h"
 
+void draw_drawable (drawable_t *drawable, cairo_t *cairo) {
+
+    /* TODO: polymorphic drawable types */
+}
+
 void integrate_body (body_t *body) {
 
     /* TODO: do better than this forward euler integration */
@@ -60,7 +65,7 @@ void remove_all_forces (stage_t *stage) {
 
 void draw_stage (stage_t *stage, cairo_t *cairo) {
 
-    int width, height;
+    int width, height, i;
     cairo_surface_t *surface = cairo_get_target (cairo);
     width  = cairo_image_surface_get_width  (surface);
     height = cairo_image_surface_get_height (surface);
@@ -90,10 +95,22 @@ void draw_stage (stage_t *stage, cairo_t *cairo) {
 	cairo_rectangle (cairo, 0.5, 0, 0.5, 0.5);
 	cairo_set_source_rgba (cairo, 0, 0, 1, 0.40);
 	cairo_fill (cairo);
+
+    /* draw all the drawables */
+    for (i = 0; i < stage->n_drawables; i++)
+        draw_drawable (stage->drawables[i], cairo);
 }
 
 void advance_stage (stage_t *stage) {
 
+    int i;
+
+    /* compute acceleration for all bodies from forces */
+    /* TODO */
+
+    /* integrate all the bodies */
+    for (i = 0; i < stage->n_bodies; i++)
+        integrate_body (stage->bodies[i]);
 }
 
 stage_t *create_stage () {
