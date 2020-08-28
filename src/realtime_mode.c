@@ -1,3 +1,4 @@
+#include <SDL2/SDL_events.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -12,6 +13,7 @@ int entry_realtime (char *script_path) {
 
     SDL_Window *window;
     SDL_Surface *surface;
+    SDL_Event event;
     uint8_t *pixels;
     int i;
 
@@ -35,9 +37,22 @@ int entry_realtime (char *script_path) {
     for (i = 0; i < surface->w * surface->h * surface->format->BytesPerPixel; i++)
         pixels[i] = i % 256;
 
-    SDL_UpdateWindowSurface (window);
+    /* main event loop */
+    for (;;) {
 
-    scanf ("huh");
+        while (SDL_PollEvent (&event) != 0)
+            switch (event.type) {
+
+                case SDL_QUIT:
+                    goto quit;
+
+            }
+
+        SDL_UpdateWindowSurface (window);
+
+        /* TODO: some sort of vsync mechanism ?? */
+    }
+quit:
 
     /* cleanup */
 
