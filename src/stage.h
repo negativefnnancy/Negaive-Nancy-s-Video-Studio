@@ -6,13 +6,12 @@
 #include <cairo.h>
 
 #include "util.h"
-#include "matrix.h"
 
 /* a drawable is any object that can be drawn on screen on the stage */
 
 typedef struct drawable_t {
 
-    mat3_t transformation;
+    cairo_matrix_t transformation;
     
 } drawable_t;
 
@@ -23,11 +22,11 @@ void draw_drawable (drawable_t *drawable, cairo_t *cairo);
 
 typedef struct body_t {
 
-    mat3_t *position;       /* represents the body's current state */
-    mat3_t velocity;        /* first derivative of state */
-    mat3_t acceleration;    /* second derivative of state */
-    double mass;              /* mass of the whole body */
-    double moment_of_inertia; /* moment of inertia of the whole body */
+    cairo_matrix_t *position;    /* represents the body's current state */
+    cairo_matrix_t velocity;     /* first derivative of state */
+    cairo_matrix_t acceleration; /* second derivative of state */
+    double mass;                 /* mass of the whole body */
+    double moment_of_inertia;    /* moment of inertia of the whole body */
 
 } body_t;
 

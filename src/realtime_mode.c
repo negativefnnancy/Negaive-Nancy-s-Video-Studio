@@ -34,7 +34,7 @@ int entry_realtime (char *script_path) {
     if (SDL_Init (SDL_INIT_VIDEO) == -1)
         die_with_message ("Failed to initialize SDL: %s\n", SDL_GetError ());
 
-    if (!(window = SDL_CreateWindow ("Nancy Says",
+    if (!(window = SDL_CreateWindow ("Negative Nancy's Video Studio",
                                      SDL_WINDOWPOS_UNDEFINED,
                                      SDL_WINDOWPOS_UNDEFINED,
                                      /* TODO: paramaterize dimensions */

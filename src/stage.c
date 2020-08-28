@@ -3,16 +3,22 @@
 void draw_drawable (drawable_t *drawable, cairo_t *cairo) {
 
     /* TODO: polymorphic drawable types */
+
+    /* TODO: this is just test stuff lol */
+	/*cairo_rectangle (cairo, 0, 0, width / 2, height / 2);
+	cairo_set_source_rgba (cairo, width, 0, 0, 0.80 * height);
+	cairo_fill (cairo);
+    */
 }
 
 void integrate_body (body_t *body) {
 
     /* TODO: do better than this forward euler integration */
 
-    *(body->position) = add_mat3 (*(body->position), body->velocity);
+    cairo_matrix_multiply (body->position, body->position, &(body->velocity));
 
     /* assuming acceleration has already been calculated */
-    body->velocity = add_mat3 (body->velocity, body->acceleration);
+    cairo_matrix_multiply (&(body->velocity), &(body->velocity), &(body->acceleration));
 }
 
 void add_drawable (stage_t *stage, drawable_t *drawable) {
@@ -66,35 +72,44 @@ void remove_all_forces (stage_t *stage) {
 void draw_stage (stage_t *stage, cairo_t *cairo) {
 
     int width, height, i;
-    cairo_surface_t *surface = cairo_get_target (cairo);
-    width  = cairo_image_surface_get_width  (surface);
-    height = cairo_image_surface_get_height (surface);
+    double half_height;
+    double ratio;
+    cairo_surface_t *surface;
+
+    surface     = cairo_get_target (cairo);
+    width       = cairo_image_surface_get_width  (surface);
+    height      = cairo_image_surface_get_height (surface);
+    ratio       = (double) width / height;
+    half_height = height / 2.;
+
+    /* normalized height units */
+    cairo_translate (cairo, width / 2, half_height);
+    cairo_scale     (cairo, half_height, half_height);
 
     /* TODO: this is just example code lol */
 
-    /* Examples are in 1.0 x 1.0 coordinate space */
-	cairo_scale (cairo, width, height);
-
 	/* Drawing code goes here */
-	cairo_set_source_rgb (cairo, 0, 0, 0);
-	cairo_move_to (cairo, 0, 0);
+	cairo_set_source_rgb (cairo, 1, 0, 0);
+	cairo_move_to (cairo, -1, -1);
 	cairo_line_to (cairo, 1, 1);
-	cairo_move_to (cairo, 1, 0);
-	cairo_line_to (cairo, 0, 1);
+	cairo_move_to (cairo, -1, 1);
+	cairo_line_to (cairo, 1, -1);
 	cairo_set_line_width (cairo, 0.2);
 	cairo_stroke (cairo);
 
-	cairo_rectangle (cairo, 0, 0, 0.5, 0.5);
-	cairo_set_source_rgba (cairo, 1, 0, 0, 0.80);
+/*
+	cairo_rectangle (cairo, 0, 0, width / 2, height / 2);
+	cairo_set_source_rgba (cairo, width, 0, 0, 0.80 * height);
 	cairo_fill (cairo);
 
-	cairo_rectangle (cairo, 0, 0.5, 0.5, 0.5);
-	cairo_set_source_rgba (cairo, 0, 1, 0, 0.60);
+	cairo_rectangle (cairo, 0, 0.5 * height, 0.5 * width, 0.5 * height);
+	cairo_set_source_rgba (cairo, 0, 1 * height, 0, 0.60);
 	cairo_fill (cairo);
 
-	cairo_rectangle (cairo, 0.5, 0, 0.5, 0.5);
-	cairo_set_source_rgba (cairo, 0, 0, 1, 0.40);
+	cairo_rectangle (cairo, 0.5 * width, 0, 0.5 * width, 0.5 * height);
+	cairo_set_source_rgba (cairo, 0, 0, width, 0.40 * height);
 	cairo_fill (cairo);
+    */
 
     /* draw all the drawables */
     for (i = 0; i < stage->n_drawables; i++)
