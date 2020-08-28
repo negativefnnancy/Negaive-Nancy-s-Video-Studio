@@ -1,5 +1,6 @@
 CC          := cc
 CFLAGS      := -Wall -Wpedantic -ansi -O3 -g
+LDFLAGS     := $(shell pkg-config --cflags --libs x11)
 BIN         := nnvc
 BUILD_DIR   := build
 SOURCE_DIR  := src
@@ -9,7 +10,7 @@ SOURCE      := $(SOURCE_DIR)/*.c
 TARGET      := $(BUILD_DIR)/$(BIN)
 
 $(TARGET): $(BUILD_DIR) $(SOURCE)
-	$(CC) $(CFLAGS) $(SOURCE) -o $(TARGET)
+	$(CC) $(CFLAGS) $(SOURCE) -o $(TARGET) $(LDFLAGS)
 
 $(BUILD_DIR):
 	mkdir $(BUILD_DIR)

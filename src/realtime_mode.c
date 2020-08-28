@@ -1,56 +1,50 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <assert.h>
+
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 #include "debug.h"
-#include "window.h"
-
-/* window event callback */
-void callback (window_event_t event) {
-
-    switch (event.type) {
-
-        case WINDOW_OPEN:
-            debug_printf ("[EVENT] open!");
-            update_window (event.window);
-            break;
-
-        case WINDOW_CLOSE:
-            debug_printf ("[EVENT] close!");
-            break;
-
-        case WINDOW_RESIZE:
-            debug_printf ("[EVENT] resize! (%d, %d)", event.data.resize.width,
-                                                      event.data.resize.height);
-            break;
-
-        case WINDOW_VSYNC:
-            debug_printf ("[EVENT] vsync!");
-            update_window (event.window);
-            break;
-    }
-}
 
 /* realtime mode is where the video is displayed immediately in a window */
 int entry_realtime (char *script_path) {
 
-    window_t *window;
+    Display *display;
+    int screen;
+    Window window;
+    int black, white;
 
     puts ("Ready for some realtime action!");
 
-    /* create a window */
-    debug_printf ("creating a window!\n");
-    window = create_window ();
-    window->event_handler = callback;
-    window->vsync = true;
+    /* connect to X server */
 
-    /* enter window's event loop */
-    debug_printf ("entering window's run loop!\n");
-    run_window (window);
+    assert ((display = XOpenDisplay (NULL)));
+    screen = DefaultScreen (display);
+    black = BlackPixel (display, screen);
+    white = WhitePixel (display, screen);
 
+    window = XCreateSimpleWindow (display,
+                                  DefaultRootWindow (display),
+                                  0, 0, 300, 200, 0, black, white);
+
+    XSetStandardProperties (display, window, "Nancy Says", NULL, None,
+                            NULL, 0, NULL);
+
+    XSelectInput (display, window, ExposureMask |
+                                   ButtonPressMask |
+                                   KeyPressMask);
+    
+    XClearWindow (display, window);
+    XMapRaised (display, window);
+    XFlush (display);
+
+    scanf ("yo");
     /* cleanup */
-    debug_printf ("destroying window!\n");
-    destroy_window (window);
+
+    XDestroyWindow (display, window);
+    XCloseDisplay (display);
 
     return EXIT_SUCCESS;
 }
