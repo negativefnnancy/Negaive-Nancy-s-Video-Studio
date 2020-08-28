@@ -1,6 +1,6 @@
 CC          := cc
 CFLAGS      := -Wall -Wpedantic -ansi -O3 -g
-LDFLAGS     := $(shell pkg-config --cflags --libs x11)
+LDFLAGS     := $(shell pkg-config --cflags --libs sdl2)
 BIN         := nnvc
 BUILD_DIR   := build
 SOURCE_DIR  := src

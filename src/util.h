@@ -1,6 +1,7 @@
-#ifndef DEBUG_H
-#define DEBUG_H
+#ifndef UTIL_H
+#define UTIL_H
 
+#include <stdlib.h>
 #include <stdbool.h>
 
 extern bool DEBUG;
@@ -9,4 +10,6 @@ extern bool DEBUG;
 void _debug_printf (char *format, ...);
 void debug_printf (char *format, ...);
 
-#endif /* DEBUG_H */
+void die_with_message (char *format, ...);
+
+#endif /* UTIL_H */

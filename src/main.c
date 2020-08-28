@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <getopt.h>
 
-#include "debug.h"
+#include "util.h"
 
 /* Nancy Says: Negative Nancy's video compiler!
  * 
