@@ -2,9 +2,11 @@ CC          := cc
 CFLAGS      := -Wall -Wpedantic -ansi -O3 -g
 LDFLAGS     := $(shell pkg-config --cflags --libs sdl2)
 BIN         := nnvs
+MAN         := nnvs.1
 BUILD_DIR   := build
 SOURCE_DIR  := src
 INSTALL_DIR := /usr/bin
+MAN_DIR     := /usr/share/man/man1
 
 SOURCE      := $(SOURCE_DIR)/*.c
 TARGET      := $(BUILD_DIR)/$(BIN)
@@ -31,3 +33,4 @@ test: $(TARGET)
 
 install: $(TARGET)
 	install $(TARGET) $(INSTALL_DIR)
+	install $(MAN)    $(MAN_DIR)/$(MAN)
