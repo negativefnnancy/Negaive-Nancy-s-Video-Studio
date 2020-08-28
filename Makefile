@@ -1,6 +1,7 @@
 CC          := cc
 CFLAGS      := -Wall -Wpedantic -ansi -O3 -g
-LDFLAGS     := $(shell pkg-config --cflags --libs sdl2)
+LDFLAGS     := $(shell pkg-config --cflags --libs sdl2) \
+               $(shell pkg-config --cflags --libs cairo)
 BIN         := nnvs
 MAN         := nnvs.1
 BUILD_DIR   := build

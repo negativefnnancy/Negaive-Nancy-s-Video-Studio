@@ -21,6 +21,9 @@
  * - encode to a video file mode,
  * - stream to video server mode
  *
+ * Also, there will be two of these modes to be chosen from:
+ * - interactive mode, without a script
+ * - script mode, which interprets and executuse from a script
  */
 
 /* program use mode */

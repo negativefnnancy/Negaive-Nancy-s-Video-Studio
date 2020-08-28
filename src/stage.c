@@ -2,6 +2,8 @@
 
 void integrate_body (body_t *body) {
 
+    /* TODO: do better than this forward euler integration */
+
     *(body->position) = add_mat3 (*(body->position), body->velocity);
 
     /* assuming acceleration has already been calculated */
@@ -56,8 +58,38 @@ void remove_all_forces (stage_t *stage) {
     stage->n_forces = 0;
 }
 
-void draw_stage (stage_t *stage) {
+void draw_stage (stage_t *stage, cairo_t *cairo) {
 
+    int width, height;
+    cairo_surface_t *surface = cairo_get_target (cairo);
+    width  = cairo_image_surface_get_width  (surface);
+    height = cairo_image_surface_get_height (surface);
+
+    /* TODO: this is just example code lol */
+
+    /* Examples are in 1.0 x 1.0 coordinate space */
+	cairo_scale (cairo, width, height);
+
+	/* Drawing code goes here */
+	cairo_set_source_rgb (cairo, 0, 0, 0);
+	cairo_move_to (cairo, 0, 0);
+	cairo_line_to (cairo, 1, 1);
+	cairo_move_to (cairo, 1, 0);
+	cairo_line_to (cairo, 0, 1);
+	cairo_set_line_width (cairo, 0.2);
+	cairo_stroke (cairo);
+
+	cairo_rectangle (cairo, 0, 0, 0.5, 0.5);
+	cairo_set_source_rgba (cairo, 1, 0, 0, 0.80);
+	cairo_fill (cairo);
+
+	cairo_rectangle (cairo, 0, 0.5, 0.5, 0.5);
+	cairo_set_source_rgba (cairo, 0, 1, 0, 0.60);
+	cairo_fill (cairo);
+
+	cairo_rectangle (cairo, 0.5, 0, 0.5, 0.5);
+	cairo_set_source_rgba (cairo, 0, 0, 1, 0.40);
+	cairo_fill (cairo);
 }
 
 void advance_stage (stage_t *stage) {
