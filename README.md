@@ -8,6 +8,10 @@ _NOTE: this is super ultra pre-alpha right now!! none of this is reliable_
 
 _TODO: script and gif example_
 
+![Screenshot](screenshot.png)
+
+_screenshot of testing the physics........_
+
 ## Dependencies
 
 You'll need... _TODO_
