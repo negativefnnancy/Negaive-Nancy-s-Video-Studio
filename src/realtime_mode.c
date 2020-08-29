@@ -36,10 +36,10 @@ int entry_realtime (char *script_path) {
     puts ("Ready for some realtime action!");
 
     /* setup the stage */
-    gravity = create_gravity_force (make_vec2 (0, 4));
+    gravity = create_gravity_force (make_vec2 (0, 1));
     spring  = create_spring_force  (NULL,                &body_1,
-                                    make_vec2 (-.5, 0),  make_vec2 (-.5, 0),
-                                    8, 1, 0);
+                                    make_vec2 (-.25, 0),  make_vec2 (.25, 0),
+                                    0.5, 0, 0);
     shape_1 = create_rectangle (make_vec2 (1, 1));   /* square */
     shape_2 = create_rectangle (make_vec2 (0.5, 1)); /* tall rect */
     shape_3 = create_polygon   ();                   /* star */
@@ -63,14 +63,14 @@ int entry_realtime (char *script_path) {
     stage = create_stage (make_color (0.2, 0.2, 0.2, 1));
     add_drawable (stage, drawable_3);
     add_body     (stage, &body_1);
-    add_force    (stage, gravity);
+/*    add_force    (stage, gravity);*/
     add_force    (stage, spring);
 
     body_1.transformation = &(drawable_3->transformation);
-    body_1.position     = make_vec2 (0, 0);
-    body_1.velocity     = make_vec2 (0, .1);
+    body_1.position     = make_vec2 (0, 0.1);
+    body_1.velocity     = make_vec2 (0, 0);
     body_1.acceleration = make_vec2 (0, 0);
-    body_1.angle                = 0;
+    body_1.angle                = M_PI;
     body_1.angular_velocity     = 0;
     body_1.angular_acceleration = 0;
     body_1.mass              = 1;
