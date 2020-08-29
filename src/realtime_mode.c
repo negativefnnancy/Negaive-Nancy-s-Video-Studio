@@ -30,16 +30,20 @@ int entry_realtime (char *script_path) {
 
     /* setup the stage */
     stage = create_stage ();
-    body_1.position = &(drawable_1.transformation);
-    cairo_matrix_init_identity  (&(drawable_1.transformation));
-    cairo_matrix_init_rotate (&(body_1.velocity), 0.01);
-    cairo_matrix_translate (&(body_1.velocity), 0.01, 0);
-    cairo_matrix_init_identity  (&(body_1.acceleration));
     add_drawable (stage, &drawable_1);
-    add_body (stage, &body_1);
+    add_body     (stage, &body_1);
+
+    body_1.transformation = &(drawable_1.transformation);
+    body_1.position     = make_vec2 (0, 0);
+    body_1.velocity     = make_vec2 (1, 0);
+    body_1.acceleration = make_vec2 (0, 0);
+    body_1.angle                = 0;
+    body_1.angular_velocity     = 1;
+    body_1.angular_acceleration = 0;
+
+    cairo_matrix_init_identity  (&(drawable_1.transformation));
 
     /* initialize sdl and create a window and surface */
-
     if (SDL_Init (SDL_INIT_VIDEO) == -1)
         die_with_message ("Failed to initialize SDL: %s\n", SDL_GetError ());
 
@@ -63,7 +67,6 @@ int entry_realtime (char *script_path) {
             }
 
         /* draw a new frame */
-
         sdl_surface = SDL_GetWindowSurface (window);
         SDL_LockSurface (sdl_surface);
 
@@ -87,10 +90,10 @@ int entry_realtime (char *script_path) {
 
         /* prepare the stage for the next frame */
         /* TODO: proper delta time */
-        advance_stage (stage, 1000 / 60);
+        advance_stage (stage, 1. / 60);
 
         /* TODO: some sort of proper vsync mechanism ?? */
-        SDL_Delay (1000 / 60);
+        SDL_Delay (1000. / 60);
     }
 quit:
 

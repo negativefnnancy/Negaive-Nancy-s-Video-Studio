@@ -6,9 +6,13 @@
 #include <cairo.h>
 
 #include "util.h"
+#include "vector.h"
+
+
+
+/* DRAWABLE */
 
 /* a drawable is any object that can be drawn on screen on the stage */
-
 typedef struct drawable_t {
 
     cairo_matrix_t transformation;
@@ -18,35 +22,55 @@ typedef struct drawable_t {
 /* draw a drawable in its current state */
 void draw_drawable (drawable_t *drawable, cairo_t *cairo);
 
-/* a body is a physical entity whose position is integrated over time */
 
+
+/* BODY */
+
+/* a body is a physical entity whose position is integrated over time */
 typedef struct body_t {
 
-    cairo_matrix_t *position;    /* represents the body's current state */
-    cairo_matrix_t velocity;     /* first derivative of state */
-    cairo_matrix_t acceleration; /* second derivative of state */
-    double mass;                 /* mass of the whole body */
-    double moment_of_inertia;    /* moment of inertia of the whole body */
+    /* attached transformation if any */
+    cairo_matrix_t *transformation;
+
+    /* translational state and first and second derivative */
+    vec2_t position;
+    vec2_t velocity;
+    vec2_t acceleration;
+
+    /* rotational state and first and second derivative */
+    double angle;
+    double angular_velocity;
+    double angular_acceleration;
+
+    /* inertial properties */
+    double mass;                 /* quantity of translational inertia */
+    double moment_of_inertia;    /* quantity of rotational inertia */
 
 } body_t;
 
 /* integrate the state of the body for the next frame */
 void integrate_body (body_t *body, double delta_time);
 
-/* a force causes an exchange in momentum between two bodies */
 
+
+/* FORCE */
+
+/* a force causes an exchange in momentum between two bodies */
 typedef struct force_t {
 
     int DUMMY; /* dummy lol */
 
 } force_t;
 
-/* a stage is a state machine representing everything happening on screen
- * at a specific moment */
+
+
+/* STAGE */
 
 /* size of preallocated arrays */
 #define STAGE_CAPACITY 256
 
+/* a stage is a state machine representing everything happening on screen
+ * at a specific moment */
 typedef struct stage_t {
 
     /* number of each item on stage */
