@@ -31,7 +31,7 @@ int entry_realtime (char *script_path) {
 
     /* setup the stage */
     shape_1    = create_rectangle (make_vec2 (1, 1));
-    drawable_1 = create_drawable_shape (shape_1);
+    drawable_1 = create_drawable_shape (shape_1, make_color (0, 0, 1));
     stage      = create_stage ();
 
     add_drawable (stage, drawable_1);

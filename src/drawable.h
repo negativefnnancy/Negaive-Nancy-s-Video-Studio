@@ -54,7 +54,7 @@ typedef struct drawable_shape_t {
     shape_t *shape;
 
     /* the color to draw the shape */
-    /* TODO */
+    color_t color;
 
     /* TODO: texture? */
 
@@ -67,6 +67,6 @@ void draw_drawable_shape (drawable_t *drawable, cairo_t *cairo);
 void destroy_drawable_shape (drawable_t *drawable);
 
 /* instantiate a drawable shape */
-drawable_t *create_drawable_shape (shape_t *shape);
+drawable_t *create_drawable_shape (shape_t *shape, color_t color);
 
 #endif /* DRAWABLE_H */

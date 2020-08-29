@@ -36,13 +36,13 @@ drawable_t *create_drawable (void *data,
 void draw_drawable_shape (drawable_t *drawable, cairo_t *cairo) {
 
     drawable_shape_t *drawable_shape = (drawable_shape_t *) drawable->data;
+    color_t color = drawable_shape->color;
 
     /* trace the shape */
     trace_shape (drawable_shape->shape, cairo);
 
     /* choose the desired color */
-    /* TODO: parameterize color */
-	cairo_set_source_rgb (cairo, 1, 1, 1);
+	cairo_set_source_rgb (cairo, color.r, color.g, color.b);
 
     /* paint the traced shape with the chosen color */
     /* TODO: stroke too? */
@@ -54,11 +54,12 @@ void destroy_drawable_shape (drawable_t *drawable) {
     free (drawable->data);
 }
 
-drawable_t *create_drawable_shape (shape_t *shape) {
+drawable_t *create_drawable_shape (shape_t *shape, color_t color) {
 
     drawable_shape_t *drawable_shape =
         (drawable_shape_t *) calloc (1, sizeof (drawable_shape_t));
     drawable_shape->shape = shape;
+    drawable_shape->color = color;
 
     return create_drawable (drawable_shape,
                             draw_drawable_shape,

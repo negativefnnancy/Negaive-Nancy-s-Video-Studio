@@ -3,6 +3,15 @@
 
 #include "util.h"
 
+color_t make_color (double r, double g, double b) {
+
+    color_t color;
+    color.r = r;
+    color.g = g;
+    color.b = b;
+    return color;
+}
+
 bool DEBUG = false;
 
 #define DEBUG_STREAM stdout

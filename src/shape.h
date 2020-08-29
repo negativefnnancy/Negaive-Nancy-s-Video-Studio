@@ -29,6 +29,10 @@ typedef struct shape_t {
 
     /* TODO: maybe some sdf's or somethin */
 
+    /* TODO: method to get area */
+
+    /* TODO: method to get moment of inertia */
+
     /* abstract destructor */
     shape_destructor_t *destroy;
 
