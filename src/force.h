@@ -172,4 +172,26 @@ void destroy_gravity_force (phantom_force_t *force);
 /* instantiate a gravity force */
 force_t *create_gravity_force (vec2_t acceleration);
 
+
+
+/* DRAG */
+
+/* drag is a phantom force that simulates air resistace */
+typedef struct drag_force_t {
+
+    /* amount to dampen translational and angular velocities */
+    double translational_drag;
+    double angular_drag;
+
+} drag_force_t;
+
+/* apply the drag to a target body */
+void drag_force_apply (phantom_force_t *force, struct stage_t *stage, body_t *body);
+
+/* free a drag force */
+void destroy_drag_force (phantom_force_t *force);
+
+/* instantiate a drag force */
+force_t *create_drag_force (double translational_drag, double angular_drag);
+
 #endif /* FORCE_H */

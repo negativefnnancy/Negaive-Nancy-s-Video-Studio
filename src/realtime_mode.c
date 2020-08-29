@@ -14,6 +14,7 @@ int entry_realtime (char *script_path) {
 
     /* nnvs stuff */
     force_t *gravity;
+    force_t *drag;
     force_t *spring_1;
     force_t *spring_2;
     stage_t *stage;
@@ -40,6 +41,7 @@ int entry_realtime (char *script_path) {
 
     /* setup the stage */
     gravity  = create_gravity_force (make_vec2 (0, 2));
+    drag     = create_drag_force    (0.25, 0.25);
     spring_1 = create_spring_force  (NULL,                  &body_1,
                                      make_vec2 (-.25, -1), make_vec2 (-.25, 0),
                                      8, 0.75, 0);
@@ -73,6 +75,7 @@ int entry_realtime (char *script_path) {
     add_body     (stage, &body_1);
     add_body     (stage, &body_2);
     add_force    (stage, gravity);
+    add_force    (stage, drag);
     add_force    (stage, spring_1);
     add_force    (stage, spring_2);
 
@@ -161,6 +164,7 @@ quit:
     destroy_shape    (shape_1);
     destroy_shape    (shape_2);
     destroy_force    (gravity);
+    destroy_force    (drag);
     destroy_force    (spring_1);
     destroy_force    (spring_2);
 

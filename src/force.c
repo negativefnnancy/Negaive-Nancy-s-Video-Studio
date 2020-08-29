@@ -224,3 +224,38 @@ force_t *create_gravity_force (vec2_t acceleration) {
                                  gravity_force_apply,
                                  destroy_gravity_force);
 }
+
+void drag_force_apply (phantom_force_t *force, struct stage_t *stage, body_t *body){
+
+    drag_force_t *drag_force = (drag_force_t *) force->data;
+
+    /* TODO: make this more..... better........ more accurate simulation */
+
+    /* apply the translational component */
+    apply_body_force (body,
+                      multiply_vec2_scalar (body->velocity,
+                                            -drag_force->translational_drag),
+                      body->position);
+
+    /* apply the angular component */
+    body->angular_acceleration -= body->angular_velocity
+                                * drag_force->angular_drag
+                                / body->moment_of_inertia;
+}
+
+void destroy_drag_force (phantom_force_t *force) {
+
+    free (force->data);
+}
+
+force_t *create_drag_force (double translational_drag, double angular_drag) {
+
+    drag_force_t *drag_force =
+        (drag_force_t *) calloc (1, sizeof (drag_force_t));
+    drag_force->translational_drag = translational_drag;
+    drag_force->angular_drag       = angular_drag;
+
+    return create_phantom_force (drag_force,
+                                 drag_force_apply,
+                                 destroy_drag_force);
+}
