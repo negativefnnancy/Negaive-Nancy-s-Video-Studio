@@ -66,19 +66,23 @@ drawable_t *create_drawable_shape (shape_t *shape, color_t color) {
                             destroy_drawable_shape);
 }
 
-void group_add_drawable (drawable_group_t *drawable_group, drawable_t *drawable) {
+void group_add_drawable (drawable_t *group, drawable_t *drawable) {
 
+    drawable_group_t *drawable_group = (drawable_group_t *) group->data;
     drawable_group->drawables[drawable_group->n_drawables++] = drawable;
 }
 
-void group_remove_drawable (drawable_group_t *drawable_group, drawable_t *drawable) {
+void group_remove_drawable (drawable_t *group, drawable_t *drawable) {
 
+    drawable_group_t *drawable_group = (drawable_group_t *) group->data;
     remove_array_item ((void **) drawable_group->drawables,
                        &(drawable_group->n_drawables),
                        drawable);
 }
 
-void group_remove_all_drawables (drawable_group_t *drawable_group) {
+void group_remove_all_drawables (drawable_t *group) {
+
+    drawable_group_t *drawable_group = (drawable_group_t *) group->data;
 
     /* simply set the size of the array to 0 */
     drawable_group->n_drawables = 0;
@@ -102,7 +106,7 @@ void destroy_drawable_group (drawable_t *drawable) {
     free (drawable_group);
 }
 
-drawable_t *create_drawable_group (shape_t *shape, color_t color) {
+drawable_t *create_drawable_group () {
 
     drawable_group_t *drawable_group =
         (drawable_group_t *) calloc (1, sizeof (drawable_group_t));

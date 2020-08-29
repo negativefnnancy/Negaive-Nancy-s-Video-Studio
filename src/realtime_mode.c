@@ -15,7 +15,10 @@ int entry_realtime (char *script_path) {
     /* nnvs stuff */
     stage_t *stage;
     shape_t *shape_1;
+    shape_t *shape_2;
     drawable_t *drawable_1;
+    drawable_t *drawable_2;
+    drawable_t *drawable_3;
     body_t body_1;
 
     /* sdl stuff */
@@ -31,13 +34,19 @@ int entry_realtime (char *script_path) {
 
     /* setup the stage */
     shape_1    = create_rectangle (make_vec2 (1, 1));
-    drawable_1 = create_drawable_shape (shape_1, make_color (0, 0, 1));
-    stage      = create_stage ();
+    shape_2    = create_rectangle (make_vec2 (0.5, 1));
+    drawable_1 = create_drawable_shape (shape_1, make_color (0, 1, 1));
+    drawable_2 = create_drawable_shape (shape_2, make_color (0, 0, 1));
+    drawable_3 = create_drawable_group ();
+    group_add_drawable (drawable_3, drawable_1);
+    group_add_drawable (drawable_3, drawable_2);
+    cairo_matrix_rotate (&(drawable_2->transformation), 0.4);
 
-    add_drawable (stage, drawable_1);
+    stage = create_stage ();
+    add_drawable (stage, drawable_3);
     add_body     (stage, &body_1);
 
-    body_1.transformation = &(drawable_1->transformation);
+    body_1.transformation = &(drawable_3->transformation);
     body_1.position     = make_vec2 (0, 0);
     body_1.velocity     = make_vec2 (1, 0);
     body_1.acceleration = make_vec2 (0, 0);
@@ -104,7 +113,10 @@ quit:
     SDL_Quit ();
     destroy_stage    (stage);
     destroy_drawable (drawable_1);
+    destroy_drawable (drawable_2);
+    destroy_drawable (drawable_3);
     destroy_shape    (shape_1);
+    destroy_shape    (shape_2);
 
     return EXIT_SUCCESS;
 }

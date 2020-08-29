@@ -88,13 +88,13 @@ typedef struct drawable_group_t {
 } drawable_group_t;
 
 /* add an instance onto a drawable group */
-void group_add_drawable (drawable_group_t *drawable_group, drawable_t *drawable);
+void group_add_drawable (drawable_t *group, drawable_t *drawable);
 
 /* remove an instance from a drawable group */
-void group_remove_drawable (drawable_group_t *drawable_group, drawable_t *drawable);
+void group_remove_drawable (drawable_t *group, drawable_t *drawable);
 
 /* remove all the instances from a drawable group */
-void group_remove_all_drawables (drawable_group_t *drawable_group);
+void group_remove_all_drawables (drawable_t *group);
 
 /* draw a drawable group */
 void draw_drawable_group (drawable_t *drawable, cairo_t *cairo);
@@ -103,6 +103,6 @@ void draw_drawable_group (drawable_t *drawable, cairo_t *cairo);
 void destroy_drawable_group (drawable_t *drawable);
 
 /* instantiate a drawable group */
-drawable_t *create_drawable_group (shape_t *shape, color_t color);
+drawable_t *create_drawable_group ();
 
 #endif /* DRAWABLE_H */
