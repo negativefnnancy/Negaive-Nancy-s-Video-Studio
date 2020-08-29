@@ -1,9 +1,10 @@
+#include "stage.h"
 #include "force.h"
 
-void apply_force (force_t *force) {
+void apply_force (force_t *force, struct stage_t *stage) {
 
     /* polymorphic dispatch */
-    force->apply (force);
+    force->apply (force, stage);
 }
 
 void destroy_force (force_t *force) {
@@ -51,13 +52,14 @@ force_t *create_interaction_force (body_t *a,
     return create_force (interaction_force, apply, destroy_interaction_force);
 }
 
-void apply_phantom_force (force_t *force) {
+void apply_phantom_force (force_t *force, struct stage_t *stage) {
 
+    int i;
     phantom_force_t *phantom_force = (phantom_force_t *) force->data;
 
-    /* TODO: for every target body, do:
-     *   phantom_force->apply (phantom_force, body);
-     */
+    /* iterate all of the targets and apply the phantom force to each */
+    for (i = 0; i < stage->n_bodies; i++)
+        phantom_force->apply (phantom_force, stage, stage->bodies[i]);
 }
 
 void destroy_phantom_force (force_t *force) {
@@ -81,4 +83,28 @@ force_t *create_phantom_force (void *data,
     phantom_force->destroy = destroy;
 
     return create_force (phantom_force, apply_phantom_force, destroy_phantom_force);
+}
+
+void gravity_force_apply (phantom_force_t *force, struct stage_t *stage, body_t *body) {
+
+    gravity_force_t *gravity_force = (gravity_force_t *) force->data;
+
+    /* apply the acceleration due to gravity to the target body */
+    body->acceleration = add_vec2 (body->acceleration, gravity_force->acceleration);
+}
+
+void destroy_gravity_force (phantom_force_t *force) {
+
+    free (force->data);
+}
+
+force_t *create_gravity_force (vec2_t acceleration) {
+
+    gravity_force_t *gravity_force =
+        (gravity_force_t *) calloc (1, sizeof (gravity_force_t));
+    gravity_force->acceleration = acceleration;
+
+    return create_phantom_force (gravity_force,
+                                 gravity_force_apply,
+                                 destroy_gravity_force);
 }

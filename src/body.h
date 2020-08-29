@@ -1,6 +1,10 @@
 #ifndef BODY_H
 #define BODY_H
 
+#include <cairo.h>
+
+#include "vector.h"
+
 /* a body is a physical entity whose position is integrated over time */
 typedef struct body_t {
 

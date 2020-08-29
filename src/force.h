@@ -1,6 +1,8 @@
 #ifndef FORCE_H
 #define FORCE_H
 
+#include <stdlib.h>
+
 #include "body.h"
 
 
@@ -8,9 +10,10 @@
 /* FORCE */
 
 struct force_t;
+struct stage_t;
 
 /* polymorphic method types */
-typedef void force_apply_method_t (struct force_t *);
+typedef void force_apply_method_t (struct force_t *, struct stage_t *);
 typedef void force_destructor_t   (struct force_t *);
 
 /* an abstract force that is applied to manipulate the stage */
@@ -28,7 +31,7 @@ typedef struct force_t {
 } force_t;
 
 /* apply the force to its targets */
-void apply_force (force_t *force);
+void apply_force (force_t *force, struct stage_t *);
 
 /* free a force instance */
 void destroy_force (force_t *force);
@@ -79,7 +82,9 @@ force_t *create_interaction_force (body_t *a,
 struct phantom_force_t;
 
 /* polymorphic method types */
-typedef void phantom_force_apply_method_t (struct phantom_force_t *, body_t *body);
+typedef void phantom_force_apply_method_t (struct phantom_force_t *,
+                                           struct stage_t *stage,
+                                           body_t *body);
 typedef void phantom_force_destructor_t   (struct phantom_force_t *);
 
 /* an abstract phantom force that injects energy into its target bodies */
@@ -97,7 +102,7 @@ typedef struct phantom_force_t {
 } phantom_force_t;
 
 /* apply the phantom force to its targets */
-void apply_phantom_force (force_t *force);
+void apply_phantom_force (force_t *force, struct stage_t *stage);
 
 /* free a phantom force instance */
 void destroy_phantom_force (force_t *force);
@@ -106,5 +111,26 @@ void destroy_phantom_force (force_t *force);
 force_t *create_phantom_force (void *data,
                                phantom_force_apply_method_t *apply,
                                phantom_force_destructor_t *destroy);
+
+
+
+/* GRAVITY */
+
+/* gravity is a phantom force that simply applies constant acceleration */
+typedef struct gravity_force_t {
+
+    /* the acceleration vector */
+    vec2_t acceleration;
+
+} gravity_force_t;
+
+/* apply the gravity to a target body */
+void gravity_force_apply (phantom_force_t *force, struct stage_t *stage, body_t *body);
+
+/* free a gravity force */
+void destroy_gravity_force (phantom_force_t *force);
+
+/* instantiate a gravity force */
+force_t *create_gravity_force (vec2_t acceleration);
 
 #endif /* FORCE_H */

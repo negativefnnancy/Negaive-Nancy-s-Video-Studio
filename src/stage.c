@@ -52,14 +52,12 @@ void draw_stage (stage_t *stage, cairo_t *cairo) {
 
     int width, height, i;
     double half_height;
-    double ratio;
     cairo_surface_t *surface;
     color_t bg_color;
 
     surface     = cairo_get_target (cairo);
     width       = cairo_image_surface_get_width  (surface);
     height      = cairo_image_surface_get_height (surface);
-    ratio       = (double) width / height;
     half_height = height / 2.;
 
     /* clear the screen */
@@ -89,8 +87,13 @@ void advance_stage (stage_t *stage, double delta_time) {
 
     int i;
 
+    /* reset the acceleration accumulator for all the bodies */
+    for (i = 0; i < stage->n_bodies; i++)
+        stage->bodies[i]->acceleration = make_vec2 (0, 0);
+
     /* compute acceleration for all bodies from forces */
-    /* TODO */
+    for (i = 0; i < stage->n_forces; i++)
+        apply_force (stage->forces[i], stage);
 
     /* integrate all the bodies */
     for (i = 0; i < stage->n_bodies; i++)
