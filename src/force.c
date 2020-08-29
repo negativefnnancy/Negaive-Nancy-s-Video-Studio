@@ -204,7 +204,9 @@ void gravity_force_apply (phantom_force_t *force, struct stage_t *stage, body_t 
     gravity_force_t *gravity_force = (gravity_force_t *) force->data;
 
     /* apply the acceleration due to gravity to the target body */
-    body->acceleration = add_vec2 (body->acceleration, gravity_force->acceleration);
+    apply_body_force (body,
+                      multiply_vec2_scalar (gravity_force->acceleration, body->mass),
+                      body->position);
 }
 
 void destroy_gravity_force (phantom_force_t *force) {

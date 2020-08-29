@@ -36,7 +36,10 @@ double distance_vec2 (vec2_t a, vec2_t b);
 /* get the unit direction from point a to point b */
 vec2_t direction_vec2 (vec2_t a, vec2_t b);
 
-/* get the angel of a vector aroud the origin */
+/* get the angle of a vector aroud the origin */
 double angle_vec2 (vec2_t vec);
+
+/* rotate a vector 90 degrees clockwise */
+vec2_t rotate_vec2 (vec2_t vec);
 
 #endif /* VECTOR_H */

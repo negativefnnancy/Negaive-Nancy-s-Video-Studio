@@ -50,7 +50,7 @@ void remove_all_forces (stage_t *stage) {
 
 void draw_stage (stage_t *stage, cairo_t *cairo) {
 
-    int width, height, i;
+    int width, height, i, j;
     double half_height;
     cairo_surface_t *surface;
     color_t bg_color;
@@ -72,6 +72,11 @@ void draw_stage (stage_t *stage, cairo_t *cairo) {
     /* draw all the drawables */
     for (i = 0; i < stage->n_drawables; i++)
         draw_drawable (stage->drawables[i], cairo);
+
+    /* draw all the force vectors on each body */
+    for (i = 0; i < stage->n_bodies; i++)
+        for (j = 0; j < stage->bodies[i]->n_forces; j++)
+            draw_force (stage->bodies[i]->forces[j], cairo);
 }
 
 void advance_stage (stage_t *stage, double delta_time) {
@@ -80,7 +85,7 @@ void advance_stage (stage_t *stage, double delta_time) {
 
     /* reset the acceleration accumulator for all the bodies */
     for (i = 0; i < stage->n_bodies; i++)
-        stage->bodies[i]->acceleration = make_vec2 (0, 0);
+        clear_forces (stage->bodies[i]);
 
     /* compute acceleration for all bodies from forces */
     for (i = 0; i < stage->n_forces; i++)

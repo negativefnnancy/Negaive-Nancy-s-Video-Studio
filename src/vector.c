@@ -64,3 +64,11 @@ double angle_vec2 (vec2_t vec) {
 
     return atan2 (vec.y, vec.x);
 }
+
+vec2_t rotate_vec2 (vec2_t vec) {
+
+    vec2_t rotated;
+    rotated.x = -vec.y;
+    rotated.y = vec.x;
+    return rotated;
+}
