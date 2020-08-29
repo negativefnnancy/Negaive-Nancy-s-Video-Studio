@@ -42,7 +42,7 @@ void draw_drawable_shape (drawable_t *drawable, cairo_t *cairo) {
     trace_shape (drawable_shape->shape, cairo);
 
     /* choose the desired color */
-	cairo_set_source_rgb (cairo, color.r, color.g, color.b);
+	cairo_set_source_rgba (cairo, color.r, color.g, color.b, color.a);
 
     /* paint the traced shape with the chosen color */
     /* TODO: stroke too? */

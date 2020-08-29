@@ -60,6 +60,9 @@ typedef struct force_t {
  * at a specific moment */
 typedef struct stage_t {
 
+    /* color of the background */
+    color_t background_color;
+
     /* number of each item on stage */
     size_t n_drawables;
     size_t n_bodies;
@@ -95,7 +98,7 @@ void advance_stage (stage_t *stage, double delta_time);
 /* TODO: process a single audio frame */
 
 /* instantiate a stage */
-stage_t *create_stage ();
+stage_t *create_stage (color_t background_color);
 
 /* free an instantiated stage */
 void destroy_stage (stage_t *stage);

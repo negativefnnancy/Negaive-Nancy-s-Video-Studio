@@ -10,17 +10,18 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-/* represents a normalized rgb color */
+/* represents a normalized rgba color */
 typedef struct color_t {
 
     double r;
     double g;
     double b;
+    double a;
 
 } color_t;
 
 /* instantiate a color */
-color_t make_color (double r, double g, double b);
+color_t make_color (double r, double g, double b, double a);
 
 extern bool DEBUG;
 

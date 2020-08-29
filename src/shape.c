@@ -74,3 +74,44 @@ shape_t *create_rectangle (vec2_t size) {
 
     return create_shape (rectangle, trace_rectangle, destroy_rectangle);
 }
+
+void add_vertex (shape_t *shape, vec2_t vertex) {
+
+    shape_polygon_t *polygon = (shape_polygon_t *) shape->data;
+    polygon->vertices[polygon->n_vertices++] = vertex;
+}
+
+void trace_polygon (shape_t *shape, cairo_t *cairo) {
+
+    int i;
+    vec2_t vertex;
+    shape_polygon_t *polygon = (shape_polygon_t *) shape->data;
+    vertex = polygon->vertices[polygon->n_vertices - 1];
+
+    /* begin a new path and iterate all the vertices of the polygon */
+    cairo_new_path (cairo);
+	cairo_move_to  (cairo, vertex.x, vertex.y);
+    for (i = 0; i < polygon->n_vertices; i++) {
+        
+        vertex = polygon->vertices[i];
+	    cairo_line_to (cairo, vertex.x, vertex.y);
+    }
+}
+
+void destroy_polygon (shape_t *shape) {
+
+    shape_polygon_t *polygon = (shape_polygon_t *) shape->data;
+
+    free (polygon->vertices);
+    free (polygon);
+}
+
+shape_t *create_polygon () {
+
+    shape_polygon_t *polygon =
+        (shape_polygon_t *) calloc (1, sizeof (shape_polygon_t));
+    polygon->n_vertices = 0;
+    polygon->vertices = (vec2_t *) calloc (VERTEX_CAPACITY, sizeof (vec2_t));
+
+    return create_shape (polygon, trace_polygon, destroy_polygon);
+}

@@ -3,12 +3,13 @@
 
 #include "util.h"
 
-color_t make_color (double r, double g, double b) {
+color_t make_color (double r, double g, double b, double a) {
 
     color_t color;
     color.r = r;
     color.g = g;
     color.b = b;
+    color.a = a;
     return color;
 }
 

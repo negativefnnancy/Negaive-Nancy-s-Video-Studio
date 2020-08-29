@@ -82,12 +82,18 @@ void draw_stage (stage_t *stage, cairo_t *cairo) {
     double half_height;
     double ratio;
     cairo_surface_t *surface;
+    color_t bg_color;
 
     surface     = cairo_get_target (cairo);
     width       = cairo_image_surface_get_width  (surface);
     height      = cairo_image_surface_get_height (surface);
     ratio       = (double) width / height;
     half_height = height / 2.;
+
+    /* clear the screen */
+    bg_color = stage->background_color;
+    cairo_set_source_rgb (cairo, bg_color.r, bg_color.g, bg_color.b);
+    cairo_paint          (cairo);
 
     /* normalized height units */
     cairo_translate (cairo, width / 2, half_height);
@@ -119,12 +125,13 @@ void advance_stage (stage_t *stage, double delta_time) {
         integrate_body (stage->bodies[i], delta_time);
 }
 
-stage_t *create_stage () {
+stage_t *create_stage (color_t background_color) {
 
     stage_t *stage   = (stage_t *)     calloc (1, sizeof (stage_t));
     stage->drawables = (drawable_t **) calloc (STAGE_CAPACITY, sizeof (drawable_t *));
     stage->bodies    = (body_t **)     calloc (STAGE_CAPACITY, sizeof (body_t *));
     stage->forces    = (force_t **)    calloc (STAGE_CAPACITY, sizeof (force_t *));
+    stage->background_color = background_color;
     return stage;
 }
 

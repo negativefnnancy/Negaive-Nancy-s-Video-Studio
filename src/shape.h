@@ -91,4 +91,37 @@ void destroy_rectangle (shape_t *shape);
 /* instantiate a rectangle */
 shape_t *create_rectangle (vec2_t size);
 
+
+
+/* POLYGON */
+
+/* size of preallocated vertices array */
+#define VERTEX_CAPACITY 256
+
+/* a subclass of shape that represents an arbitrary polygon on screen */
+typedef struct shape_polygon_t {
+
+    /* number of vertices on the polygon */
+    size_t n_vertices;
+
+    /* the vertices of the polygon */
+    vec2_t *vertices;
+
+    /* width and height of rectangle */
+    vec2_t size;
+
+} shape_polygon_t;
+
+/* add a vertex to a polygon */
+void add_vertex (shape_t *shape, vec2_t vertex);
+
+/* trace a polygon */
+void trace_polygon (shape_t *shape, cairo_t *cairo);
+
+/* free a polygon instance */
+void destroy_polygon (shape_t *shape);
+
+/* instantiate a polygon */
+shape_t *create_polygon ();
+
 #endif /* SHAPE_H */

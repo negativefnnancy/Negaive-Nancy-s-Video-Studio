@@ -16,6 +16,7 @@ int entry_realtime (char *script_path) {
     stage_t *stage;
     shape_t *shape_1;
     shape_t *shape_2;
+    shape_t *shape_3;
     drawable_t *drawable_1;
     drawable_t *drawable_2;
     drawable_t *drawable_3;
@@ -33,16 +34,26 @@ int entry_realtime (char *script_path) {
     puts ("Ready for some realtime action!");
 
     /* setup the stage */
-    shape_1    = create_rectangle (make_vec2 (1, 1));
-    shape_2    = create_rectangle (make_vec2 (0.5, 1));
-    drawable_1 = create_drawable_shape (shape_1, make_color (0, 1, 1));
-    drawable_2 = create_drawable_shape (shape_2, make_color (0, 0, 1));
+    shape_1    = create_rectangle (make_vec2 (1, 1));   /* square */
+    shape_2    = create_rectangle (make_vec2 (0.5, 1)); /* tall rect */
+    shape_3    = create_polygon   ();                   /* star */
+    add_vertex (shape_3, make_vec2 (-1, 0));
+    add_vertex (shape_3, make_vec2 (-.3, -.3));
+    add_vertex (shape_3, make_vec2 (0, -1));
+    add_vertex (shape_3, make_vec2 (.3, -.3));
+    add_vertex (shape_3, make_vec2 (1, 0));
+    add_vertex (shape_3, make_vec2 (.3, .3));
+    add_vertex (shape_3, make_vec2 (0, 1));
+    add_vertex (shape_3, make_vec2 (-.3, .3));
+
+    drawable_1 = create_drawable_shape (shape_3, make_color (0, 1, 1, 1));
+    drawable_2 = create_drawable_shape (shape_3, make_color (0, 0, 1, 1));
     drawable_3 = create_drawable_group ();
     group_add_drawable (drawable_3, drawable_1);
     group_add_drawable (drawable_3, drawable_2);
-    cairo_matrix_rotate (&(drawable_2->transformation), 0.4);
+    cairo_matrix_scale (&(drawable_2->transformation), 0.8, 0.8);
 
-    stage = create_stage ();
+    stage = create_stage (make_color (0.2, 0.2, 0.2, 1));
     add_drawable (stage, drawable_3);
     add_body     (stage, &body_1);
 
