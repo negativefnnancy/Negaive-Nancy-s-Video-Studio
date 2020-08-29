@@ -131,12 +131,12 @@ void spring_force_apply (force_t *force, struct stage_t *stage) {
     if (interaction_force->a)
         apply_body_force (interaction_force->a,
                           net_force_a,
-                          spring_force->position_a);
+                          position_a);
 
     if (interaction_force->b)
         apply_body_force (interaction_force->b,
                           net_force_b,
-                          spring_force->position_b);
+                          position_b);
 
 }
 

@@ -38,7 +38,7 @@ int entry_realtime (char *script_path) {
     /* setup the stage */
     gravity    = create_gravity_force (make_vec2 (0, 1));
     spring     = create_spring_force  (NULL,                &body_1,
-                                       make_vec2 (-0.2, 0), make_vec2 (0, 0),
+                                       make_vec2 (0, 0),    make_vec2 (-.5, 0),
                                        2, 1, 0);
     shape_1    = create_rectangle (make_vec2 (1, 1));   /* square */
     shape_2    = create_rectangle (make_vec2 (0.5, 1)); /* tall rect */
@@ -67,7 +67,7 @@ int entry_realtime (char *script_path) {
     add_force    (stage, spring);
 
     body_1.transformation = &(drawable_3->transformation);
-    body_1.position     = make_vec2 (0, 0);
+    body_1.position     = make_vec2 (1, 0);
     body_1.velocity     = make_vec2 (0, 0);
     body_1.acceleration = make_vec2 (0, 0);
     body_1.angle                = 0;
