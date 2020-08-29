@@ -69,15 +69,6 @@ void draw_stage (stage_t *stage, cairo_t *cairo) {
     cairo_translate (cairo, width / 2, half_height);
     cairo_scale     (cairo, half_height, half_height);
 
-    /* TODO: remove this temporary drawing stuff */
-	cairo_set_source_rgb (cairo, 1, 0, 0);
-	cairo_move_to (cairo, -1, -1);
-	cairo_line_to (cairo, 1, 1);
-	cairo_move_to (cairo, -1, 1);
-	cairo_line_to (cairo, 1, -1);
-	cairo_set_line_width (cairo, 0.2);
-	cairo_stroke (cairo);
-
     /* draw all the drawables */
     for (i = 0; i < stage->n_drawables; i++)
         draw_drawable (stage->drawables[i], cairo);

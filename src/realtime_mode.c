@@ -36,13 +36,13 @@ int entry_realtime (char *script_path) {
     puts ("Ready for some realtime action!");
 
     /* setup the stage */
-    gravity    = create_gravity_force (make_vec2 (0, 1));
-    spring     = create_spring_force  (NULL,                &body_1,
-                                       make_vec2 (0, 0),    make_vec2 (-.5, 0),
-                                       2, 1, 0);
-    shape_1    = create_rectangle (make_vec2 (1, 1));   /* square */
-    shape_2    = create_rectangle (make_vec2 (0.5, 1)); /* tall rect */
-    shape_3    = create_polygon   ();                   /* star */
+    gravity = create_gravity_force (make_vec2 (0, 4));
+    spring  = create_spring_force  (NULL,                &body_1,
+                                    make_vec2 (-.5, 0),  make_vec2 (-.5, 0),
+                                    8, 1, 0);
+    shape_1 = create_rectangle (make_vec2 (1, 1));   /* square */
+    shape_2 = create_rectangle (make_vec2 (0.5, 1)); /* tall rect */
+    shape_3 = create_polygon   ();                   /* star */
     add_vertex (shape_3, make_vec2 (-1, 0));
     add_vertex (shape_3, make_vec2 (-.3, -.3));
     add_vertex (shape_3, make_vec2 (0, -1));
@@ -67,8 +67,8 @@ int entry_realtime (char *script_path) {
     add_force    (stage, spring);
 
     body_1.transformation = &(drawable_3->transformation);
-    body_1.position     = make_vec2 (1, 0);
-    body_1.velocity     = make_vec2 (0, 0);
+    body_1.position     = make_vec2 (0, 0);
+    body_1.velocity     = make_vec2 (0, .1);
     body_1.acceleration = make_vec2 (0, 0);
     body_1.angle                = 0;
     body_1.angular_velocity     = 0;
@@ -84,7 +84,7 @@ int entry_realtime (char *script_path) {
                                      SDL_WINDOWPOS_UNDEFINED,
                                      SDL_WINDOWPOS_UNDEFINED,
                                      /* TODO: paramaterize dimensions */
-                                     300, 200,
+                                     640, 480,
                                      SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)))
         die_with_message ("Failed to create window: %s\n", SDL_GetError ());
 
