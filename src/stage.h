@@ -8,50 +8,8 @@
 #include "util.h"
 #include "vector.h"
 #include "drawable.h"
-
-
-
-/* BODY */
-
-/* a body is a physical entity whose position is integrated over time */
-typedef struct body_t {
-
-    /* attached transformation if any */
-    cairo_matrix_t *transformation;
-
-    /* translational state and first and second derivative */
-    vec2_t position;
-    vec2_t velocity;
-    vec2_t acceleration;
-
-    /* rotational state and first and second derivative */
-    double angle;
-    double angular_velocity;
-    double angular_acceleration;
-
-    /* inertial properties */
-    double mass;                 /* quantity of translational inertia */
-    double moment_of_inertia;    /* quantity of rotational inertia */
-
-} body_t;
-
-/* integrate the state of the body for the next frame */
-void integrate_body (body_t *body, double delta_time);
-
-
-
-/* FORCE */
-
-/* a force causes an exchange in momentum between two bodies */
-typedef struct force_t {
-
-    int DUMMY; /* dummy lol */
-
-} force_t;
-
-
-
-/* STAGE */
+#include "body.h"
+#include "force.h"
 
 /* size of preallocated arrays */
 #define STAGE_CAPACITY 256
