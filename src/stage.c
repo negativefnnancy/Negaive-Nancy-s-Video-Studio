@@ -45,17 +45,17 @@ void add_force (stage_t *stage, force_t *force) {
 
 void remove_drawable (stage_t *stage, drawable_t *drawable) {
 
-    remove_array_item ((void **) stage->drawables, &stage->n_drawables, drawable);
+    remove_array_item ((void **) stage->drawables, &(stage->n_drawables), drawable);
 }
 
 void remove_body (stage_t *stage, body_t *body) {
 
-    remove_array_item ((void **) stage->bodies, &stage->n_bodies, body);
+    remove_array_item ((void **) stage->bodies, &(stage->n_bodies), body);
 }
 
 void remove_forces (stage_t *stage, force_t *force) {
 
-    remove_array_item ((void **) stage->forces, &stage->n_forces, force);
+    remove_array_item ((void **) stage->forces, &(stage->n_forces), force);
 }
 
 void remove_all_drawables (stage_t *stage) {
@@ -130,9 +130,6 @@ stage_t *create_stage () {
 
 void destroy_stage (stage_t *stage) {
 
-    remove_all_drawables (stage);
-    remove_all_bodies    (stage);
-    remove_all_forces    (stage);
     free (stage->drawables);
     free (stage->bodies);
     free (stage->forces);

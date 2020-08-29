@@ -45,7 +45,7 @@ drawable_t *create_drawable (void *data,
 
 
 
-/* DRAWABLE_SHAPE */
+/* DRAWABLE SHAPE */
 
 /* a drawable shape is a drawable that draws a given shape */
 typedef struct drawable_shape_t {
@@ -63,10 +63,46 @@ typedef struct drawable_shape_t {
 /* draw a drawable shape */
 void draw_drawable_shape (drawable_t *drawable, cairo_t *cairo);
 
-/* free drawable shape instance */
+/* free a drawable shape instance */
 void destroy_drawable_shape (drawable_t *drawable);
 
 /* instantiate a drawable shape */
 drawable_t *create_drawable_shape (shape_t *shape, color_t color);
+
+
+
+/* DRAWABLE GROUP */
+
+/* size of preallocated arrays */
+#define DRAWABLE_GROUP_CAPACITY 256
+
+/* a drawable group is a container for multiple drawables */
+typedef struct drawable_group_t {
+
+    /* number of drawables in the group */
+    size_t n_drawables;
+
+    /* the drawables in the group */
+    drawable_t **drawables;
+
+} drawable_group_t;
+
+/* add an instance onto a drawable group */
+void group_add_drawable (drawable_group_t *drawable_group, drawable_t *drawable);
+
+/* remove an instance from a drawable group */
+void group_remove_drawable (drawable_group_t *drawable_group, drawable_t *drawable);
+
+/* remove all the instances from a drawable group */
+void group_remove_all_drawables (drawable_group_t *drawable_group);
+
+/* draw a drawable group */
+void draw_drawable_group (drawable_t *drawable, cairo_t *cairo);
+
+/* free a drawable group instance */
+void destroy_drawable_group (drawable_t *drawable);
+
+/* instantiate a drawable group */
+drawable_t *create_drawable_group (shape_t *shape, color_t color);
 
 #endif /* DRAWABLE_H */
