@@ -77,6 +77,45 @@ force_t *create_interaction_force (body_t *a,
 
 
 
+/* SPRING */
+
+/* spring is an interaction force that constrains two points to a certain distace */
+typedef struct spring_force_t {
+
+    /* if either body is NULL, then attaches to absolute world coordinates */
+
+    /* where on the bodies the spring is attached */
+    vec2_t position_a;
+    vec2_t position_b;
+
+    /* how quickly the spring restores */
+    double stiffness;
+
+    /* loss factor */
+    double damping;
+
+    /* the length of the spring at equilibrium */
+    double length;
+
+} spring_force_t;
+
+/* apply the spring force to its target bodies */
+void spring_force_apply (force_t *force, struct stage_t *stage);
+
+/* free a spring force */
+void destroy_spring_force (interaction_force_t *force);
+
+/* instantiate a spring force */
+force_t *create_spring_force (body_t *a,
+                              body_t *b,
+                              vec2_t position_a, 
+                              vec2_t position_b,
+                              double stiffness,
+                              double damping,
+                              double length);
+
+
+
 /* PHANTOM FORCE */
 
 struct phantom_force_t;
