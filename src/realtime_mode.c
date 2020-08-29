@@ -14,7 +14,8 @@ int entry_realtime (char *script_path) {
 
     /* nnvs stuff */
     stage_t *stage;
-    drawable_t drawable_1;
+    shape_t *shape_1;
+    drawable_t *drawable_1;
     body_t body_1;
 
     /* sdl stuff */
@@ -29,19 +30,20 @@ int entry_realtime (char *script_path) {
     puts ("Ready for some realtime action!");
 
     /* setup the stage */
-    stage = create_stage ();
-    add_drawable (stage, &drawable_1);
+    shape_1    = create_rectangle (make_vec2 (1, 1));
+    drawable_1 = create_drawable_shape (shape_1);
+    stage      = create_stage ();
+
+    add_drawable (stage, drawable_1);
     add_body     (stage, &body_1);
 
-    body_1.transformation = &(drawable_1.transformation);
+    body_1.transformation = &(drawable_1->transformation);
     body_1.position     = make_vec2 (0, 0);
     body_1.velocity     = make_vec2 (1, 0);
     body_1.acceleration = make_vec2 (0, 0);
     body_1.angle                = 0;
     body_1.angular_velocity     = 1;
     body_1.angular_acceleration = 0;
-
-    cairo_matrix_init_identity  (&(drawable_1.transformation));
 
     /* initialize sdl and create a window and surface */
     if (SDL_Init (SDL_INIT_VIDEO) == -1)
@@ -100,7 +102,9 @@ quit:
     /* cleanup */
     SDL_DestroyWindow (window);
     SDL_Quit ();
-    destroy_stage (stage);
+    destroy_stage    (stage);
+    destroy_drawable (drawable_1);
+    destroy_shape    (shape_1);
 
     return EXIT_SUCCESS;
 }

@@ -12,14 +12,14 @@
 
 /* SHAPE */
 
-typedef struct shape_t shape_t;
+struct shape_t;
 
 /* polymorphic method types */
-typedef void shape_trace_method_t (shape_t *, cairo_t *);
-typedef void shape_destructor_t   (shape_t *);
+typedef void shape_trace_method_t (struct shape_t *, cairo_t *);
+typedef void shape_destructor_t   (struct shape_t *);
 
 /* a shape is an abstract entity that represents a 2d geometry on screen */
-struct shape_t {
+typedef struct shape_t {
 
     /* polymorphic child struct */
     void *data;
@@ -32,7 +32,7 @@ struct shape_t {
     /* abstract destructor */
     shape_destructor_t *destroy;
 
-};
+} shape_t;
 
 /* trace the shape using cairo */
 void trace_shape (shape_t *shape, cairo_t *cairo);
@@ -49,7 +49,7 @@ shape_t *create_shape (void *data,
 
 /* ELLIPSE */
 
-/* an ellipse is a subclass of shape that represents an ovular region on screen */
+/* an ellipse is a subclass of shape that represents an eliptical region on screen */
 typedef struct shape_ellipse_t {
 
     /* width and height of ellipse */
@@ -65,5 +65,26 @@ void destroy_ellipse (shape_t *shape);
 
 /* instantiate an ellipse */
 shape_t *create_ellipse (vec2_t size);
+
+
+
+/* RECTANGLE */
+
+/* a rectangle is a subclass of shape that represents a rectangular box region on screen */
+typedef struct shape_rectangle_t {
+
+    /* width and height of rectangle */
+    vec2_t size;
+
+} shape_rectangle_t;
+
+/* trace a rectangle */
+void trace_rectangle (shape_t *shape, cairo_t *cairo);
+
+/* free a rectangle instance */
+void destroy_rectangle (shape_t *shape);
+
+/* instantiate a rectangle */
+shape_t *create_rectangle (vec2_t size);
 
 #endif /* SHAPE_H */

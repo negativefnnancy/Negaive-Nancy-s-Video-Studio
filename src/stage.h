@@ -7,20 +7,7 @@
 
 #include "util.h"
 #include "vector.h"
-
-
-
-/* DRAWABLE */
-
-/* a drawable is any object that can be drawn on screen on the stage */
-typedef struct drawable_t {
-
-    cairo_matrix_t transformation;
-    
-} drawable_t;
-
-/* draw a drawable in its current state */
-void draw_drawable (drawable_t *drawable, cairo_t *cairo);
+#include "drawable.h"
 
 
 

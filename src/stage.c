@@ -1,15 +1,5 @@
 #include "stage.h"
 
-void draw_drawable (drawable_t *drawable, cairo_t *cairo) {
-
-    /* TODO: polymorphic drawable types */
-
-    /* TODO: this is just test stuff lol */
-	cairo_rectangle (cairo, -0.05, -0.05, 0.1, 0.1);
-	cairo_set_source_rgb (cairo, 0, 1, 0);
-	cairo_fill (cairo);
-}
-
 void integrate_body (body_t *body, double delta_time) {
 
     /* TODO: do better than this forward euler integration (maybe) */
@@ -113,16 +103,8 @@ void draw_stage (stage_t *stage, cairo_t *cairo) {
 	cairo_stroke (cairo);
 
     /* draw all the drawables */
-    for (i = 0; i < stage->n_drawables; i++) {
-
-        drawable_t *drawable = stage->drawables[i];
-
-        /* transform by the transformation of each drawables */
-        cairo_save (cairo);
-        cairo_transform (cairo, &(drawable->transformation));
-        draw_drawable (drawable, cairo);
-        cairo_restore (cairo);
-    }
+    for (i = 0; i < stage->n_drawables; i++)
+        draw_drawable (stage->drawables[i], cairo);
 }
 
 void advance_stage (stage_t *stage, double delta_time) {
