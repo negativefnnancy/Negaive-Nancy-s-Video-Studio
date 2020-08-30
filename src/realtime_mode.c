@@ -63,7 +63,8 @@ int entry_realtime (char *script_path) {
     drawable_1 = create_drawable_shape (shape_3, make_color (0, 1, 1, 1));
     drawable_2 = create_drawable_shape (shape_3, make_color (0, 0, 1, 1));
     drawable_3 = create_drawable_group ();
-    drawable_4 = create_drawable_shape (shape_2, make_color (1, 1, 0, 1));
+    /*drawable_4 = create_drawable_shape (shape_2, make_color (1, 1, 0, 1));*/
+    drawable_4 = create_drawable_svg ("res/test.svg");
     group_add_drawable (drawable_3, drawable_1);
     group_add_drawable (drawable_3, drawable_2);
     cairo_matrix_scale (&(drawable_1->transformation), .25, .25);

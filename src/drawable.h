@@ -105,4 +105,34 @@ void destroy_drawable_group (drawable_t *drawable);
 /* instantiate a drawable group */
 drawable_t *create_drawable_group ();
 
+
+
+/* DRAWABLE SVG */
+
+/* size of preallocated arrays */
+#define DRAWABLE_SVG_CAPACITY 256
+
+/* an svg drawable loads an svg and automatically creates shapes and drawables
+ * for each element in the svg */
+typedef struct drawable_svg_t {
+
+    /* collection of created shapes from loading the svg file */
+    int n_shapes;
+    shape_t **shapes;
+
+    /* the top level group drawable containing all the drawables */
+    drawable_t *root;
+
+} drawable_svg_t;
+
+/* draw an drawable svg */
+void draw_drawable_svg (drawable_t *drawable, cairo_t *cairo);
+
+/* free a drawable svg instance */
+void destroy_drawable_svg (drawable_t *drawable);
+
+/* instantiate a drawable svg */
+drawable_t *create_drawable_svg (char *svg_path);
+
+
 #endif /* DRAWABLE_H */
