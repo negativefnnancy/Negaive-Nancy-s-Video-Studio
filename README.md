@@ -2,7 +2,7 @@
 
 Negative Nancy's live video production software!
 
-It's the software Negative Nancy uses to create her Youtube videos and streams!
+It's _(to be)_ the software Negative Nancy uses to create her Youtube videos and streams!
 
 _NOTE: this is super ultra pre-alpha right now!! none of this is reliable_
 
