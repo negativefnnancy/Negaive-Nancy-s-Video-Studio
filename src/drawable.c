@@ -280,35 +280,31 @@ done:
                             destroy_drawable_svg);
 }
 
-/* TODO: put these all in a font struct */
-#define FONT_WIDTH 128
-#define FONT_SPACING 80
-#define FONT_FRAMES 3
-#define FONT_FRAMES_PER_SECOND 20 /*3*/
-
 void draw_drawable_text (drawable_t *drawable, cairo_t *cairo, double time) {
 
     drawable_text_t *drawable_text = (drawable_text_t *) drawable->data;
     color_t color = drawable_text->color;
     char *character = drawable_text->string;
-    cairo_surface_t *font = drawable_text->font;
+    font_t *font = drawable_text->font;
     cairo_surface_t *target_surface;
     cairo_format_t format;
     cairo_t *target_context;
+    double scale;
     int frame;
 
     /* figure out what frame of animation to draw */
-    frame = (int) (time * FONT_FRAMES_PER_SECOND) % FONT_FRAMES;
+    frame = (int) (time * font->fps) % font->frames;
 
     /* scale down to one character per unit half height */
     cairo_save (cairo);
-    cairo_scale (cairo, 1.0 / FONT_WIDTH, 1.0 / FONT_WIDTH);
+    scale = 1.0 / font->width;
+    cairo_scale (cairo, scale, scale);
 
     /* create a surface to render the text to that is big enough for the whole string*/
-    format = cairo_image_surface_get_format (font);
+    format = cairo_image_surface_get_format (font->surface);
     target_surface = cairo_image_surface_create (format,
-                                                 FONT_WIDTH * strlen (character),
-                                                 FONT_WIDTH);
+                                                 font->width * strlen (character),
+                                                 font->width);
     target_context = cairo_create (target_surface);
 
     /* iterate the characters to be drawn until the null terminator is reached */
@@ -317,22 +313,23 @@ void draw_drawable_text (drawable_t *drawable, cairo_t *cairo, double time) {
         /* calculate the x offset in the font of the character
          * the font is 128 x 128 characters,
          * and the first character is ascii character #32 */
-        int x = (*character - 32) * FONT_WIDTH;
+        int x = (*character - 32) * font->width;
 
         /* set the source pattern to the given font at the x offset
          * the y offset depends on the current frame of animation
          * because each row in the image is another frame */
-        cairo_set_source_surface (target_context, font, -x, -frame * FONT_WIDTH);
+        cairo_set_source_surface (target_context, font->surface,
+                                  -x, -frame * font->width);
 
         /* draw the character glyph */
         /* TODO: text position anchors; rn this is top left only!! */
-        cairo_rectangle (target_context, 0, 0, FONT_WIDTH, FONT_WIDTH);
+        cairo_rectangle (target_context, 0, 0, font->width, font->width);
 
         /* paint the character */
 	    cairo_fill (target_context);
 
         /* translate to the position of the next character */
-        cairo_translate (target_context, FONT_SPACING, 0);
+        cairo_translate (target_context, font->spacing, 0);
 
         /* point to the next character */
         character++;
@@ -361,7 +358,7 @@ void destroy_drawable_text (drawable_t *drawable) {
     free (drawable->data);
 }
 
-drawable_t *create_drawable_text (char *string, color_t color, cairo_surface_t *font) {
+drawable_t *create_drawable_text (char *string, color_t color, font_t *font) {
 
     drawable_text_t *drawable_text =
         (drawable_text_t *) calloc (1, sizeof (drawable_text_t));

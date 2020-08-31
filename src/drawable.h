@@ -4,6 +4,7 @@
 #include <cairo.h>
 
 #include "shape.h"
+#include "font.h"
 
 
 
@@ -148,7 +149,7 @@ typedef struct drawable_text_t {
     color_t color;
 
     /* the surface containing the bitmap font to draw the string with */
-    cairo_surface_t *font;
+    font_t *font;
 
 } drawable_text_t;
 
@@ -159,6 +160,6 @@ void draw_drawable_text (drawable_t *drawable, cairo_t *cairo, double time);
 void destroy_drawable_text (drawable_t *drawable);
 
 /* instantiate a drawable text */
-drawable_t *create_drawable_text (char *string, color_t color, cairo_surface_t *font);
+drawable_t *create_drawable_text (char *string, color_t color, font_t *font);
 
 #endif /* DRAWABLE_H */

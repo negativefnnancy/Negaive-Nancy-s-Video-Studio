@@ -8,6 +8,7 @@
 #include <cairo.h>
 
 #include "util.h"
+#include "font.h"
 #include "stage.h"
 
 /* realtime mode is where the video is displayed immediately in a window */
@@ -34,7 +35,7 @@ int entry_realtime (char *script_path) {
     drawable_t *drawable_6;
     body_t body_1;
     body_t body_2;
-    cairo_surface_t *font;
+    font_t *font;
 
     /* sdl stuff */
     SDL_Window *window;
@@ -48,7 +49,7 @@ int entry_realtime (char *script_path) {
     puts ("Ready for some realtime action!");
 
     /* load the font */
-    font = cairo_image_surface_create_from_png ("res/font.png");
+    font = create_font ("res/font.png", 128, 128, 80, 3, 20);
 
     /* setup the stage */
     gravity  = create_gravity_force (make_vec2 (0, 2));
@@ -196,6 +197,7 @@ quit:
     destroy_force    (drag);
     destroy_force    (spring_1);
     destroy_force    (spring_2);
+    destroy_font     (font);
 
     return EXIT_SUCCESS;
 }
