@@ -50,7 +50,7 @@ void remove_all_bodies    (stage_t *stage);
 void remove_all_forces    (stage_t *stage);
 
 /* draw the current state of a stage */
-void draw_stage (stage_t *stage, cairo_t *cairo);
+void draw_stage (stage_t *stage, cairo_t *cairo, double time);
 
 /* advance the state of a stage to the next frame */
 void advance_stage (stage_t *stage, double delta_time);

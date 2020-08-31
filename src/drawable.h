@@ -12,7 +12,7 @@
 struct drawable_t;
 
 /* polymorphic method types */
-typedef void drawable_draw_method_t (struct drawable_t *, cairo_t *);
+typedef void drawable_draw_method_t (struct drawable_t *, cairo_t *, double time);
 typedef void drawable_destructor_t  (struct drawable_t *);
 
 /* a drawable is an abstract object that can be drawn on screen on the stage */
@@ -33,7 +33,7 @@ typedef struct drawable_t {
 } drawable_t;
 
 /* draw a drawable in its current state */
-void draw_drawable (drawable_t *drawable, cairo_t *cairo);
+void draw_drawable (drawable_t *drawable, cairo_t *cairo, double time);
 
 /* free a drawable instance */
 void destroy_drawable (drawable_t *drawable);
@@ -61,7 +61,7 @@ typedef struct drawable_shape_t {
 } drawable_shape_t;
 
 /* draw a drawable shape */
-void draw_drawable_shape (drawable_t *drawable, cairo_t *cairo);
+void draw_drawable_shape (drawable_t *drawable, cairo_t *cairo, double time);
 
 /* free a drawable shape instance */
 void destroy_drawable_shape (drawable_t *drawable);
@@ -97,7 +97,7 @@ void group_remove_drawable (drawable_t *group, drawable_t *drawable);
 void group_remove_all_drawables (drawable_t *group);
 
 /* draw a drawable group */
-void draw_drawable_group (drawable_t *drawable, cairo_t *cairo);
+void draw_drawable_group (drawable_t *drawable, cairo_t *cairo, double time);
 
 /* free a drawable group instance */
 void destroy_drawable_group (drawable_t *drawable);
@@ -125,8 +125,8 @@ typedef struct drawable_svg_t {
 
 } drawable_svg_t;
 
-/* draw an drawable svg */
-void draw_drawable_svg (drawable_t *drawable, cairo_t *cairo);
+/* draw a drawable svg */
+void draw_drawable_svg (drawable_t *drawable, cairo_t *cairo, double time);
 
 /* free a drawable svg instance */
 void destroy_drawable_svg (drawable_t *drawable);
@@ -134,5 +134,31 @@ void destroy_drawable_svg (drawable_t *drawable);
 /* instantiate a drawable svg */
 drawable_t *create_drawable_svg (char *svg_path);
 
+
+
+/* DRAWABLE TEXT */
+
+/* a drawable text item that displays a given string */
+typedef struct drawable_text_t {
+
+    /* the string to draw */
+    char *string;
+
+    /* the color to draw the string */
+    color_t color;
+
+    /* the surface containing the bitmap font to draw the string with */
+    cairo_surface_t *font;
+
+} drawable_text_t;
+
+/* draw a drawable text */
+void draw_drawable_text (drawable_t *drawable, cairo_t *cairo, double time);
+
+/* free a drawable text instance */
+void destroy_drawable_text (drawable_t *drawable);
+
+/* instantiate a drawable text */
+drawable_t *create_drawable_text (char *string, color_t color, cairo_surface_t *font);
 
 #endif /* DRAWABLE_H */

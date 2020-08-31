@@ -48,7 +48,7 @@ void remove_all_forces (stage_t *stage) {
     stage->n_forces = 0;
 }
 
-void draw_stage (stage_t *stage, cairo_t *cairo) {
+void draw_stage (stage_t *stage, cairo_t *cairo, double time) {
 
     int width, height, i, j;
     double half_height;
@@ -71,7 +71,7 @@ void draw_stage (stage_t *stage, cairo_t *cairo) {
 
     /* draw all the drawables */
     for (i = 0; i < stage->n_drawables; i++)
-        draw_drawable (stage->drawables[i], cairo);
+        draw_drawable (stage->drawables[i], cairo, time);
 
     /* draw all the force vectors on each body */
     for (i = 0; i < stage->n_bodies; i++)

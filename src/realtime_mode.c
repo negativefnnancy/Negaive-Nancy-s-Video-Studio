@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <assert.h>
+#include <time.h>
 
 #include <SDL2/SDL.h>
 #include <cairo.h>
@@ -11,6 +12,10 @@
 
 /* realtime mode is where the video is displayed immediately in a window */
 int entry_realtime (char *script_path) {
+
+    /* timer */
+    clock_t start_time;
+    double time;
 
     /* nnvs stuff */
     force_t *gravity;
@@ -25,8 +30,11 @@ int entry_realtime (char *script_path) {
     drawable_t *drawable_2;
     drawable_t *drawable_3;
     drawable_t *drawable_4;
+    drawable_t *drawable_5;
+    drawable_t *drawable_6;
     body_t body_1;
     body_t body_2;
+    cairo_surface_t *font;
 
     /* sdl stuff */
     SDL_Window *window;
@@ -38,6 +46,9 @@ int entry_realtime (char *script_path) {
     cairo_t *cairo;
 
     puts ("Ready for some realtime action!");
+
+    /* load the font */
+    font = cairo_image_surface_create_from_png ("res/font.png");
 
     /* setup the stage */
     gravity  = create_gravity_force (make_vec2 (0, 2));
@@ -65,6 +76,12 @@ int entry_realtime (char *script_path) {
     drawable_3 = create_drawable_group ();
     /*drawable_4 = create_drawable_shape (shape_2, make_color (1, 1, 0, 1));*/
     drawable_4 = create_drawable_svg ("res/test.svg");
+    drawable_5 = create_drawable_text ("It's working !! :3", make_color (0.5, 0.875, 1, 1), font);
+    drawable_6 = create_drawable_text ("It's working !! :3", make_color (0.1, 0.2, 0.3, 0.5), font);
+    cairo_matrix_translate (&(drawable_5->transformation), -1, -0.5);
+    cairo_matrix_translate (&(drawable_6->transformation), -1.025, -0.475);
+    cairo_matrix_scale (&(drawable_5->transformation), 0.2, 0.2);
+    cairo_matrix_scale (&(drawable_6->transformation), 0.2, 0.2);
     group_add_drawable (drawable_3, drawable_1);
     group_add_drawable (drawable_3, drawable_2);
     cairo_matrix_scale (&(drawable_1->transformation), .25, .25);
@@ -73,6 +90,8 @@ int entry_realtime (char *script_path) {
     stage = create_stage (make_color (.2, .2, .2, 1));
     add_drawable (stage, drawable_3);
     add_drawable (stage, drawable_4);
+    add_drawable (stage, drawable_6);
+    add_drawable (stage, drawable_5);
     add_body     (stage, &body_1);
     add_body     (stage, &body_2);
     add_force    (stage, gravity);
@@ -112,6 +131,9 @@ int entry_realtime (char *script_path) {
                                      SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)))
         die_with_message ("Failed to create window: %s\n", SDL_GetError ());
 
+    /* make note of the start time */
+    start_time = clock ();
+
     /* main event loop */
     for (;;) {
 
@@ -122,6 +144,10 @@ int entry_realtime (char *script_path) {
                     goto quit;
 
             }
+
+        /* get time of current frame */
+        /* TODO: get this in actual time 0-0 */
+        time = (double) (clock () - start_time) / CLOCKS_PER_SEC;
 
         /* draw a new frame */
         sdl_surface = SDL_GetWindowSurface (window);
@@ -135,7 +161,7 @@ int entry_realtime (char *script_path) {
                                                              sdl_surface->pitch);
         cairo = cairo_create (cairo_surface);
 
-        draw_stage (stage, cairo);
+        draw_stage (stage, cairo, time);
 
         cairo_destroy (cairo);
         cairo_surface_destroy (cairo_surface);
@@ -162,6 +188,8 @@ quit:
     destroy_drawable (drawable_2);
     destroy_drawable (drawable_3);
     destroy_drawable (drawable_4);
+    destroy_drawable (drawable_5);
+    destroy_drawable (drawable_6);
     destroy_shape    (shape_1);
     destroy_shape    (shape_2);
     destroy_force    (gravity);

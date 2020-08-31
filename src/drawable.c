@@ -1,18 +1,19 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include <svgtiny.h>
 
 #include "drawable.h"
 
-void draw_drawable (drawable_t *drawable, cairo_t *cairo) {
+void draw_drawable (drawable_t *drawable, cairo_t *cairo, double time) {
 
     /* transform by the transformation of each drawables */
     cairo_save (cairo);
     cairo_transform (cairo, &(drawable->transformation));
 
     /* polymorphic dispatch */
-    drawable->draw (drawable, cairo);
+    drawable->draw (drawable, cairo, time);
 
     /* restore the transformation matrix */
     cairo_restore (cairo);
@@ -38,7 +39,7 @@ drawable_t *create_drawable (void *data,
     return drawable;
 }
 
-void draw_drawable_shape (drawable_t *drawable, cairo_t *cairo) {
+void draw_drawable_shape (drawable_t *drawable, cairo_t *cairo, double time) {
 
     drawable_shape_t *drawable_shape = (drawable_shape_t *) drawable->data;
     color_t color = drawable_shape->color;
@@ -93,14 +94,14 @@ void group_remove_all_drawables (drawable_t *group) {
     drawable_group->n_drawables = 0;
 }
 
-void draw_drawable_group (drawable_t *drawable, cairo_t *cairo) {
+void draw_drawable_group (drawable_t *drawable, cairo_t *cairo, double time) {
 
     int i;
     drawable_group_t *drawable_group = (drawable_group_t *) drawable->data;
 
     /* draw all the drawables */
     for (i = 0; i < drawable_group->n_drawables; i++)
-        draw_drawable (drawable_group->drawables[i], cairo);
+        draw_drawable (drawable_group->drawables[i], cairo, time);
 }
 
 void destroy_drawable_group (drawable_t *drawable) {
@@ -124,12 +125,12 @@ drawable_t *create_drawable_group () {
                             destroy_drawable_group);
 }
 
-void draw_drawable_svg (drawable_t *drawable, cairo_t *cairo) {
+void draw_drawable_svg (drawable_t *drawable, cairo_t *cairo, double time) {
 
     drawable_svg_t *drawable_svg = (drawable_svg_t *) drawable->data;
 
     /* draw the root drawable */
-    draw_drawable (drawable_svg->root, cairo);
+    draw_drawable (drawable_svg->root, cairo, time);
 }
 
 void destroy_drawable_svg (drawable_t *drawable) {
@@ -277,4 +278,98 @@ done:
     return create_drawable (drawable_svg,
                             draw_drawable_svg,
                             destroy_drawable_svg);
+}
+
+/* TODO: put these all in a font struct */
+#define FONT_WIDTH 128
+#define FONT_SPACING 80
+#define FONT_FRAMES 3
+#define FONT_FRAMES_PER_SECOND 20 /*3*/
+
+void draw_drawable_text (drawable_t *drawable, cairo_t *cairo, double time) {
+
+    drawable_text_t *drawable_text = (drawable_text_t *) drawable->data;
+    color_t color = drawable_text->color;
+    char *character = drawable_text->string;
+    cairo_surface_t *font = drawable_text->font;
+    cairo_surface_t *target_surface;
+    cairo_format_t format;
+    cairo_t *target_context;
+    int frame;
+
+    /* figure out what frame of animation to draw */
+    frame = (int) (time * FONT_FRAMES_PER_SECOND) % FONT_FRAMES;
+
+    /* scale down to one character per unit half height */
+    cairo_save (cairo);
+    cairo_scale (cairo, 1.0 / FONT_WIDTH, 1.0 / FONT_WIDTH);
+
+    /* create a surface to render the text to that is big enough for the whole string*/
+    format = cairo_image_surface_get_format (font);
+    target_surface = cairo_image_surface_create (format,
+                                                 FONT_WIDTH * strlen (character),
+                                                 FONT_WIDTH);
+    target_context = cairo_create (target_surface);
+
+    /* iterate the characters to be drawn until the null terminator is reached */
+    while (*character) {
+
+        /* calculate the x offset in the font of the character
+         * the font is 128 x 128 characters,
+         * and the first character is ascii character #32 */
+        int x = (*character - 32) * FONT_WIDTH;
+
+        /* set the source pattern to the given font at the x offset
+         * the y offset depends on the current frame of animation
+         * because each row in the image is another frame */
+        cairo_set_source_surface (target_context, font, -x, -frame * FONT_WIDTH);
+
+        /* draw the character glyph */
+        /* TODO: text position anchors; rn this is top left only!! */
+        cairo_rectangle (target_context, 0, 0, FONT_WIDTH, FONT_WIDTH);
+
+        /* paint the character */
+	    cairo_fill (target_context);
+
+        /* translate to the position of the next character */
+        cairo_translate (target_context, FONT_SPACING, 0);
+
+        /* point to the next character */
+        character++;
+
+    }
+
+    /* color the letters! */
+    cairo_set_operator (target_context, CAIRO_OPERATOR_IN);
+    cairo_set_source_rgba (target_context, color.r, color.g, color.b, color.a);
+    cairo_paint (target_context);
+
+    /* now copy the rendered-to surface onto the real target ! */
+    cairo_set_source_surface (cairo, target_surface, 0, 0);
+    cairo_paint (cairo);
+
+    /* clean up */
+    cairo_destroy (target_context);
+    cairo_surface_destroy (target_surface);
+
+    /* restore the transformations */
+    cairo_restore (cairo);
+}
+
+void destroy_drawable_text (drawable_t *drawable) {
+
+    free (drawable->data);
+}
+
+drawable_t *create_drawable_text (char *string, color_t color, cairo_surface_t *font) {
+
+    drawable_text_t *drawable_text =
+        (drawable_text_t *) calloc (1, sizeof (drawable_text_t));
+    drawable_text->string = string;
+    drawable_text->color = color;
+    drawable_text->font = font;
+
+    return create_drawable (drawable_text,
+                            draw_drawable_text,
+                            destroy_drawable_text);
 }
