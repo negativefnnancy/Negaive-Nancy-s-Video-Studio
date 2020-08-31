@@ -11,6 +11,9 @@
 #include "font.h"
 #include "stage.h"
 
+#define WIDTH 640
+#define HEIGHT 480
+
 /* realtime mode is where the video is displayed immediately in a window */
 int entry_realtime (char *script_path) {
 
@@ -23,6 +26,9 @@ int entry_realtime (char *script_path) {
     force_t *drag;
     force_t *spring_1;
     force_t *spring_2;
+    force_t *mouse_force;
+    interaction_force_t *mouse_interaction_force;
+    spring_force_t *mouse_spring_force;
     stage_t *stage;
     shape_t *shape_1;
     shape_t *shape_2;
@@ -46,6 +52,10 @@ int entry_realtime (char *script_path) {
     cairo_surface_t *cairo_surface;
     cairo_t *cairo;
 
+    /* mouse state */
+    vec2_t mouse_position = make_vec2 (0, 0);
+    bool mouse_down = false;
+
     puts ("Ready for some realtime action!");
 
     /* load the font */
@@ -54,12 +64,20 @@ int entry_realtime (char *script_path) {
     /* setup the stage */
     gravity  = create_gravity_force (make_vec2 (0, 2));
     drag     = create_drag_force    (0.25, 0.25);
-    spring_1 = create_spring_force  (NULL,                  &body_1,
-                                     make_vec2 (-.25, -1), make_vec2 (-.25, 0),
-                                     8, 0.75, 0);
-    spring_2 = create_spring_force  (&body_1,               &body_2,
-                                     make_vec2 (.25, -0),    make_vec2 (0, -.25),
-                                     8, 0.75, 0);
+    spring_1 = create_spring_force    (NULL,                  &body_1,
+                                       make_vec2 (-.25, -1), make_vec2 (-.25, 0),
+                                       8, 0.75, 0);
+    spring_2 = create_spring_force    (&body_1,               &body_2,
+                                       make_vec2 (.25, -0),    make_vec2 (0, -.25),
+                                       8, 0.75, 0);
+    mouse_force = create_spring_force (NULL,                   NULL,
+                                       make_vec2 (0, 0),    make_vec2 (0, 0),
+                                       8, 0.5, 0);
+
+    /* this is scary 0-0 */
+    mouse_interaction_force = (interaction_force_t *) mouse_force->data;
+    mouse_spring_force = (spring_force_t *) mouse_interaction_force->data;
+
     shape_1 = create_rectangle (make_vec2 (1, 1));    /* square */
     shape_2 = create_rectangle (make_vec2 (.25, .5)); /* tall rect */
     shape_3 = create_polygon   ();                    /* star */
@@ -127,8 +145,7 @@ int entry_realtime (char *script_path) {
     if (!(window = SDL_CreateWindow ("Negative Nancy's Video Studio",
                                      SDL_WINDOWPOS_UNDEFINED,
                                      SDL_WINDOWPOS_UNDEFINED,
-                                     /* TODO: paramaterize dimensions */
-                                     640, 480,
+                                     WIDTH, HEIGHT,
                                      SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)))
         die_with_message ("Failed to create window: %s\n", SDL_GetError ());
 
@@ -144,6 +161,44 @@ int entry_realtime (char *script_path) {
                 case SDL_QUIT:
                     goto quit;
 
+                case SDL_MOUSEMOTION:
+                    /* record the mouse position
+                     * and transform it to normalized device units */
+                    mouse_position = make_vec2 (event.motion.x, event.motion.y);
+                    mouse_position = multiply_vec2_scalar (mouse_position,
+                                                           2.0 / HEIGHT);
+                    mouse_position = subtract_vec2 (mouse_position,
+                                                    make_vec2 ((double) WIDTH / HEIGHT,
+                                                               1));
+
+                    debug_printf ("mouse position: %f, %f\n", mouse_position.x,
+                                                              mouse_position.y);
+
+                    /* the location of the mouse in the mouse force */
+                    mouse_spring_force->position_a = mouse_position;
+
+                    break;
+
+                case SDL_MOUSEBUTTONDOWN:
+                    /* if a physical body was clicked on, create a spring force
+                     * that attaches the body at that point to the mouse */
+                    mouse_down = true;
+                    add_force (stage, mouse_force);
+
+                    /* the first body of the spring will be the mouse position
+                     * and the second body will be the target body */
+                    mouse_interaction_force->b = stage->bodies[0]; /* TODO for real! */
+                    
+                    /* the relative location on the target body */
+                    mouse_spring_force->position_b = make_vec2 (0, 0); /* TODO: !!! */
+
+                    break;
+
+                case SDL_MOUSEBUTTONUP:
+                    /* remove any spring force due to the mouse */
+                    mouse_down = false;
+                    remove_force (stage, mouse_force);
+                    break;
             }
 
         /* get time of current frame */
@@ -197,6 +252,7 @@ quit:
     destroy_force    (drag);
     destroy_force    (spring_1);
     destroy_force    (spring_2);
+    destroy_force    (mouse_force);
     destroy_font     (font);
 
     return EXIT_SUCCESS;

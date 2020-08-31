@@ -42,7 +42,7 @@ void add_force    (stage_t *stage, struct force_t *force);
 /* remove an instance from a stage */
 void remove_drawable (stage_t *stage, drawable_t *drawable);
 void remove_body     (stage_t *stage, body_t *body);
-void remove_forces   (stage_t *stage, struct force_t *force);
+void remove_force    (stage_t *stage, struct force_t *force);
 
 /* remove all the instances from a stage */
 void remove_all_drawables (stage_t *stage);

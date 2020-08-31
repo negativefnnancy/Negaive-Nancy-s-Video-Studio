@@ -25,7 +25,7 @@ void remove_body (stage_t *stage, body_t *body) {
     remove_array_item ((void **) stage->bodies, &(stage->n_bodies), body);
 }
 
-void remove_forces (stage_t *stage, force_t *force) {
+void remove_force (stage_t *stage, force_t *force) {
 
     remove_array_item ((void **) stage->forces, &(stage->n_forces), force);
 }
