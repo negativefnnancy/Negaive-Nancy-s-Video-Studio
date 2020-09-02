@@ -1,6 +1,8 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <cairo.h>
+
 /* represents a 2d vector */
 typedef struct vec2_t {
 
@@ -41,5 +43,11 @@ double angle_vec2 (vec2_t vec);
 
 /* rotate a vector 90 degrees clockwise */
 vec2_t rotate_vec2 (vec2_t vec);
+
+/* rotate a vector by a given number of radians clockwise */
+vec2_t rotate_vec2_radians (vec2_t vec, double radians);
+
+/* multiply a vector by a matrix */
+vec2_t multiply_vec2_matrix (vec2_t vec, cairo_matrix_t mat);
 
 #endif /* VECTOR_H */

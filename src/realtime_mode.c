@@ -42,6 +42,8 @@ int entry_realtime (char *script_path) {
     body_t body_1;
     body_t body_2;
     font_t *font;
+    drawable_t *hovered_drawable;
+    body_t *hovered_body;
 
     /* sdl stuff */
     SDL_Window *window;
@@ -62,8 +64,8 @@ int entry_realtime (char *script_path) {
     font = create_font ("res/font.png", 128, 128, 80, 3, 20);
 
     /* setup the stage */
-    gravity  = create_gravity_force (make_vec2 (0, 2));
-    drag     = create_drag_force    (0.25, 0.25);
+    gravity  = create_gravity_force   (make_vec2 (0, 2));
+    drag     = create_drag_force      (0.25, 0.25);
     spring_1 = create_spring_force    (NULL,                  &body_1,
                                        make_vec2 (-.25, -1), make_vec2 (-.25, 0),
                                        8, 0.75, 0);
@@ -78,7 +80,7 @@ int entry_realtime (char *script_path) {
     mouse_interaction_force = (interaction_force_t *) mouse_force->data;
     mouse_spring_force = (spring_force_t *) mouse_interaction_force->data;
 
-    shape_1 = create_rectangle (make_vec2 (1, 1));    /* square */
+    shape_1 = create_rectangle (make_vec2 (0.25, 0.25));    /* square */
     shape_2 = create_rectangle (make_vec2 (.25, .5)); /* tall rect */
     shape_3 = create_polygon   ();                    /* star */
     add_vertex (shape_3, make_vec2 (-1,    0));
@@ -90,8 +92,8 @@ int entry_realtime (char *script_path) {
     add_vertex (shape_3, make_vec2 ( 0,    1));
     add_vertex (shape_3, make_vec2 (-0.3,  0.3));
 
-    drawable_1 = create_drawable_shape (shape_3, make_color (0, 1, 1, 1));
-    drawable_2 = create_drawable_shape (shape_3, make_color (0, 0, 1, 1));
+    drawable_1 = create_drawable_shape (shape_1, make_color (0, 1, 1, 1));
+    drawable_2 = create_drawable_shape (shape_1, make_color (0, 0, 1, 1));
     drawable_3 = create_drawable_group ();
     /*drawable_4 = create_drawable_shape (shape_2, make_color (1, 1, 0, 1));*/
     drawable_4 = create_drawable_svg ("res/test.svg");
@@ -103,23 +105,27 @@ int entry_realtime (char *script_path) {
     cairo_matrix_scale (&(drawable_6->transformation), 0.2, 0.2);
     group_add_drawable (drawable_3, drawable_1);
     group_add_drawable (drawable_3, drawable_2);
-    cairo_matrix_scale (&(drawable_1->transformation), .25, .25);
-    cairo_matrix_scale (&(drawable_2->transformation), .15, .15);
+    cairo_matrix_scale (&(drawable_1->transformation), 0.25, 0.25);
+    cairo_matrix_translate (&(drawable_1->transformation), -0.5, 0);
+    cairo_matrix_scale (&(drawable_2->transformation), .55, .55);
 
     stage = create_stage (make_color (.2, .2, .2, 1));
-    add_drawable (stage, drawable_3);
+    /*add_drawable (stage, drawable_3);
     add_drawable (stage, drawable_4);
     add_drawable (stage, drawable_6);
     add_drawable (stage, drawable_5);
     add_body     (stage, &body_1);
     add_body     (stage, &body_2);
-    add_force    (stage, gravity);
-    add_force    (stage, drag);
     add_force    (stage, spring_1);
-    add_force    (stage, spring_2);
+    add_force    (stage, spring_2);*/
+
+    add_drawable (stage, drawable_3);
+    add_body     (stage, &body_1);
+    /*add_force    (stage, gravity);*/
+    add_force    (stage, drag);
 
     body_1.transformation = &(drawable_3->transformation);
-    body_1.position     = make_vec2 (0, 0.05);
+    body_1.position     = make_vec2 (1, 0);
     body_1.velocity     = make_vec2 (0, 0);
     body_1.acceleration = make_vec2 (0, 0);
     body_1.angle                = 0;
@@ -137,6 +143,8 @@ int entry_realtime (char *script_path) {
     body_2.angular_acceleration = 0;
     body_2.mass              = 1;
     body_2.moment_of_inertia = 0.125;
+
+    hovered_drawable = NULL;
 
     /* initialize sdl and create a window and surface */
     if (SDL_Init (SDL_INIT_VIDEO) == -1)
@@ -162,6 +170,12 @@ int entry_realtime (char *script_path) {
                     goto quit;
 
                 case SDL_MOUSEMOTION:
+
+                    /* first see if there is anything under the mouse */
+                    hovered_drawable = get_drawable_at_point (stage, mouse_position);
+
+                    debug_printf ("hello %d\n", hovered_drawable);
+
                     /* record the mouse position
                      * and transform it to normalized device units */
                     mouse_position = make_vec2 (event.motion.x, event.motion.y);
@@ -180,17 +194,42 @@ int entry_realtime (char *script_path) {
                     break;
 
                 case SDL_MOUSEBUTTONDOWN:
-                    /* if a physical body was clicked on, create a spring force
-                     * that attaches the body at that point to the mouse */
-                    mouse_down = true;
-                    add_force (stage, mouse_force);
 
-                    /* the first body of the spring will be the mouse position
-                     * and the second body will be the target body */
-                    mouse_interaction_force->b = stage->bodies[0]; /* TODO for real! */
-                    
-                    /* the relative location on the target body */
-                    mouse_spring_force->position_b = make_vec2 (0, 0); /* TODO: !!! */
+                    /* first see if there is anything under the mouse */
+                    hovered_drawable = get_drawable_at_point (stage, mouse_position);
+
+                    if (hovered_drawable) {
+
+                        /* then see if there is a body associated with that */
+                        hovered_body = get_body_of_drawable (stage, hovered_drawable);
+
+                        if (hovered_body) {
+
+                            vec2_t transformed;
+                            cairo_matrix_t inverted;
+
+                            /* if a physical body was clicked on, create a spring force
+                             * that attaches the body at that point to the mouse */
+                            mouse_down = true;
+                            add_force (stage, mouse_force);
+
+                            /* the first body of the spring will be the mouse position
+                             * and the second body will be the target body */
+                            mouse_interaction_force->b = hovered_body;
+                            
+                            /* the relative location on the target body */
+                            /* got to transform the mouse position to the local
+                             * coordinate system of the body */
+
+                            /* got to invert the trasnformation */
+                            inverted = hovered_drawable->transformation;
+                            cairo_matrix_invert (&inverted);
+                            transformed = multiply_vec2_matrix (mouse_position,
+                                                                inverted);
+
+                            mouse_spring_force->position_b = transformed;
+                        }
+                    }
 
                     break;
 
@@ -218,6 +257,19 @@ int entry_realtime (char *script_path) {
         cairo = cairo_create (cairo_surface);
 
         draw_stage (stage, cairo, time);
+
+        /* highlight the hovered drawable */
+        if (hovered_drawable) {
+
+            cairo_save (cairo);
+            cairo_transform (cairo, &(hovered_drawable->transformation));
+
+            /* draw a circle at the center of the hovered drawable */
+	        cairo_set_source_rgba (cairo, 1, 1, 1, 1);
+            cairo_arc (cairo, 0, 0, 0.025, 0, 2 * M_PI);
+
+            cairo_restore (cairo);
+        }
 
         cairo_destroy (cairo);
         cairo_surface_destroy (cairo_surface);

@@ -106,6 +106,16 @@ void clear_forces (body_t *body) {
     body->n_forces = 0;
 }
 
+bool inside_body (body_t *body, vec2_t point) {
+
+    /* first transform the point to the coordinate system of the body */
+    vec2_t translated  = subtract_vec2       (point, body->position);
+    vec2_t transformed = rotate_vec2_radians (translated, -body->angle);
+
+    /* then return whether the point is in the shape */
+    return inside_shape (body->shape, transformed);
+}
+
 void draw_force (original_force_t force, cairo_t *cairo) {
 
     vec2_t tail           = force.origin;

@@ -8,6 +8,7 @@
 
 #include "util.h"
 #include "vector.h"
+#include "shape.h"
 
 /* line width of drawn force arrows in normalized deviced units */
 #define ARROW_LINE_WIDTH      0.0075
@@ -34,6 +35,10 @@ typedef struct body_t {
 
     /* attached transformation if any */
     cairo_matrix_t *transformation;
+
+    /* attached shape if any */
+    /* TODO: probably have an associated drawable instead for simplicity..... */
+    shape_t *shape;
 
     /* translational state and first and second derivative */
     vec2_t position;
@@ -75,6 +80,9 @@ vec2_t get_body_transformed_velocity (body_t *body, vec2_t position);
 
 /* clear the force accumulation including the acceleration accumulator */
 void clear_forces (body_t *body);
+
+/* whether a given point is within the shape of the body */
+bool inside_body (body_t *body, vec2_t point);
 
 /* draw a representation of an original force */
 void draw_force (original_force_t force, cairo_t *cairo);

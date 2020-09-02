@@ -19,6 +19,20 @@ void draw_drawable (drawable_t *drawable, cairo_t *cairo, double time) {
     cairo_restore (cairo);
 }
 
+bool inside_drawable (drawable_t *drawable, vec2_t point) {
+
+    vec2_t transformed;
+
+    /* got to invert the trasnformation */
+    cairo_matrix_t inverted = drawable->transformation;
+    cairo_matrix_invert (&inverted);
+
+    /* transform the point to the local coordinate system of the drawable */
+    transformed = multiply_vec2_matrix (point, inverted);
+
+    return drawable->inside (drawable, transformed);
+}
+
 void destroy_drawable (drawable_t *drawable) {
 
     /* polymorphic dispatch */
@@ -29,11 +43,13 @@ void destroy_drawable (drawable_t *drawable) {
 
 drawable_t *create_drawable (void *data,
                              drawable_draw_method_t *draw,
+                             drawable_inside_method_t *inside,
                              drawable_destructor_t *destroy) {
 
     drawable_t *drawable = (drawable_t *) calloc (1, sizeof (drawable_t));
     drawable->data       = data;
     drawable->draw       = draw;
+    drawable->inside     = inside;
     drawable->destroy    = destroy;
     cairo_matrix_init_identity (&(drawable->transformation));
     return drawable;
@@ -55,6 +71,12 @@ void draw_drawable_shape (drawable_t *drawable, cairo_t *cairo, double time) {
 	cairo_fill (cairo);
 }
 
+bool inside_drawable_shape (drawable_t *drawable, vec2_t point) {
+
+    drawable_shape_t *drawable_shape = (drawable_shape_t *) drawable->data;
+    return inside_shape (drawable_shape->shape, point);
+}
+
 void destroy_drawable_shape (drawable_t *drawable) {
 
     free (drawable->data);
@@ -69,6 +91,7 @@ drawable_t *create_drawable_shape (shape_t *shape, color_t color) {
 
     return create_drawable (drawable_shape,
                             draw_drawable_shape,
+                            inside_drawable_shape,
                             destroy_drawable_shape);
 }
 
@@ -104,6 +127,21 @@ void draw_drawable_group (drawable_t *drawable, cairo_t *cairo, double time) {
         draw_drawable (drawable_group->drawables[i], cairo, time);
 }
 
+bool inside_drawable_group (drawable_t *drawable, vec2_t point) {
+
+    int i;
+    drawable_group_t *drawable_group = (drawable_group_t *) drawable->data;
+
+    /* a point is inside a drawable group if it is in any
+     * of the children drawables */
+
+    for (i = 0; i < drawable_group->n_drawables; i++)
+        if (inside_drawable (drawable_group->drawables[i], point))
+            return true;
+
+    return false;
+}
+
 void destroy_drawable_group (drawable_t *drawable) {
 
     drawable_group_t *drawable_group = (drawable_group_t *) drawable->data;
@@ -122,6 +160,7 @@ drawable_t *create_drawable_group () {
 
     return create_drawable (drawable_group,
                             draw_drawable_group,
+                            inside_drawable_group,
                             destroy_drawable_group);
 }
 
@@ -131,6 +170,14 @@ void draw_drawable_svg (drawable_t *drawable, cairo_t *cairo, double time) {
 
     /* draw the root drawable */
     draw_drawable (drawable_svg->root, cairo, time);
+}
+
+bool inside_drawable_svg (drawable_t *drawable, vec2_t point) {
+
+    drawable_svg_t *drawable_svg = (drawable_svg_t *) drawable->data;
+
+    /* just check with the root, which contains all the components of the svg */
+    return inside_drawable (drawable_svg->root, point);
 }
 
 void destroy_drawable_svg (drawable_t *drawable) {
@@ -277,6 +324,7 @@ drawable_t *create_drawable_svg (char *svg_path) {
 done:
     return create_drawable (drawable_svg,
                             draw_drawable_svg,
+                            inside_drawable_svg,
                             destroy_drawable_svg);
 }
 
@@ -358,6 +406,14 @@ void destroy_drawable_text (drawable_t *drawable) {
     free (drawable->data);
 }
 
+bool inside_drawable_text (drawable_t *drawable, vec2_t point) {
+
+    /* drawable_text_t *drawable_text = (drawable_text_t *) drawable->data; */
+
+    /* TODO */
+    return false;
+}
+
 drawable_t *create_drawable_text (char *string, color_t color, font_t *font) {
 
     drawable_text_t *drawable_text =
@@ -368,5 +424,6 @@ drawable_t *create_drawable_text (char *string, color_t color, font_t *font) {
 
     return create_drawable (drawable_text,
                             draw_drawable_text,
+                            inside_drawable_text,
                             destroy_drawable_text);
 }

@@ -49,6 +49,12 @@ void remove_all_drawables (stage_t *stage);
 void remove_all_bodies    (stage_t *stage);
 void remove_all_forces    (stage_t *stage);
 
+/* get the top drawable under a point */
+drawable_t *get_drawable_at_point (stage_t *stage, vec2_t point);
+
+/* get the body if any associated with a drawable */
+body_t *get_body_of_drawable (stage_t *stage, drawable_t *drawable);
+
 /* draw the current state of a stage */
 void draw_stage (stage_t *stage, cairo_t *cairo, double time);
 

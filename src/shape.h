@@ -2,6 +2,7 @@
 #define SHAPE_H
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include <cairo.h>
 
@@ -15,8 +16,9 @@
 struct shape_t;
 
 /* polymorphic method types */
-typedef void shape_trace_method_t (struct shape_t *, cairo_t *);
-typedef void shape_destructor_t   (struct shape_t *);
+typedef void shape_trace_method_t  (struct shape_t *, cairo_t *);
+typedef bool shape_inside_method_t (struct shape_t *, vec2_t);
+typedef void shape_destructor_t    (struct shape_t *);
 
 /* a shape is an abstract entity that represents a 2d geometry on screen */
 typedef struct shape_t {
@@ -33,6 +35,9 @@ typedef struct shape_t {
 
     /* TODO: method to get moment of inertia */
 
+    /* method to determine whether a given point is inside the shape */
+    shape_inside_method_t *inside;
+
     /* abstract destructor */
     shape_destructor_t *destroy;
 
@@ -41,12 +46,16 @@ typedef struct shape_t {
 /* trace the shape using cairo */
 void trace_shape (shape_t *shape, cairo_t *cairo);
 
+/* whether a point is inside a shape */
+bool inside_shape (shape_t *shape, vec2_t point);
+
 /* free a shape instance */
 void destroy_shape (shape_t *shape);
 
 /* instantiate a shape */
 shape_t *create_shape (void *data,
                        shape_trace_method_t *trace,
+                       shape_inside_method_t *inside,
                        shape_destructor_t *destroy);
 
 
@@ -63,6 +72,9 @@ typedef struct shape_ellipse_t {
 
 /* trace an ellipse */
 void trace_ellipse (shape_t *shape, cairo_t *cairo);
+
+/* whether a point is inside an ellipse */
+bool inside_ellipse (shape_t *shape, vec2_t point);
 
 /* free an ellipse instance */
 void destroy_ellipse (shape_t *shape);
@@ -84,6 +96,9 @@ typedef struct shape_rectangle_t {
 
 /* trace a rectangle */
 void trace_rectangle (shape_t *shape, cairo_t *cairo);
+
+/* whether a point is inside a rectangle */
+bool inside_ellipse (shape_t *shape, vec2_t point);
 
 /* free a rectangle instance */
 void destroy_rectangle (shape_t *shape);
@@ -117,6 +132,9 @@ void add_vertex (shape_t *shape, vec2_t vertex);
 
 /* trace a polygon */
 void trace_polygon (shape_t *shape, cairo_t *cairo);
+
+/* whether a point is inside a polygon */
+bool inside_polygon (shape_t *shape, vec2_t point);
 
 /* free a polygon instance */
 void destroy_polygon (shape_t *shape);

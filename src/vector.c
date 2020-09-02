@@ -72,3 +72,20 @@ vec2_t rotate_vec2 (vec2_t vec) {
     rotated.y = vec.x;
     return rotated;
 }
+
+vec2_t rotate_vec2_radians (vec2_t vec, double radians) {
+
+    /* first get the vector in polar coordinates */
+    double length = length_vec2 (vec);
+    double angle  = atan2 (vec.y, vec.x);
+
+    /* add to the angle and convert back to cartesian coordinates */
+    angle += radians;
+    return multiply_vec2_scalar (make_vec2 (cos (angle), sin (angle)), length);
+}
+
+vec2_t multiply_vec2_matrix (vec2_t vec, cairo_matrix_t mat) {
+
+    return make_vec2 (vec.x * mat.xx + vec.y * mat.xy + mat.x0,
+                      vec.y * mat.xy + vec.y * mat.yy + mat.y0);
+}

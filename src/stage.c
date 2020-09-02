@@ -48,6 +48,36 @@ void remove_all_forces (stage_t *stage) {
     stage->n_forces = 0;
 }
 
+drawable_t *get_drawable_at_point (stage_t *stage, vec2_t point) {
+
+    int i;
+
+    /* iterate all the drawables on stage until finding one that is
+     * under the given point */
+    for (i = 0; i < stage->n_drawables; i++)
+        if (inside_drawable (stage->drawables[i], point))
+            return stage->drawables[i];
+
+    return NULL;
+}
+
+body_t *get_body_of_drawable (stage_t *stage, drawable_t *drawable) {
+
+    int i, j;
+
+    /* TODO: i really dont like how this is setup lol */
+
+    /* iterate all the bodies and find one that has the same transformation as
+     * any of the drawables */
+    for (i = 0; i < stage->n_bodies; i++)
+        for (j = 0; j < stage->n_drawables; j++)
+            if (stage->bodies[i]->transformation ==
+                &(stage->drawables[j]->transformation))
+                return stage->bodies[i];
+
+    return NULL;
+}
+
 void draw_stage (stage_t *stage, cairo_t *cairo, double time) {
 
     int width, height, i, j;

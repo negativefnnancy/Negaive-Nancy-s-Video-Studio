@@ -4,6 +4,7 @@
 #include <cairo.h>
 
 #include "shape.h"
+#include "vector.h"
 #include "font.h"
 
 
@@ -13,8 +14,9 @@
 struct drawable_t;
 
 /* polymorphic method types */
-typedef void drawable_draw_method_t (struct drawable_t *, cairo_t *, double time);
-typedef void drawable_destructor_t  (struct drawable_t *);
+typedef void drawable_draw_method_t   (struct drawable_t *, cairo_t *, double time);
+typedef bool drawable_inside_method_t (struct drawable_t *, vec2_t);
+typedef void drawable_destructor_t    (struct drawable_t *);
 
 /* a drawable is an abstract object that can be drawn on screen on the stage */
 typedef struct drawable_t {
@@ -28,6 +30,10 @@ typedef struct drawable_t {
     /* abstract method to draw the drawable in its current state */
     drawable_draw_method_t *draw;
 
+    /* abstract method to determine whether a given point is inside
+     * the visible part of the drawable */
+    drawable_inside_method_t *inside;
+
     /* abstract destructor */
     drawable_destructor_t *destroy;
     
@@ -36,12 +42,16 @@ typedef struct drawable_t {
 /* draw a drawable in its current state */
 void draw_drawable (drawable_t *drawable, cairo_t *cairo, double time);
 
+/* whether a given point is inside the visible portion of a drawable */
+bool inside_drawable (drawable_t *drawable, vec2_t point);
+
 /* free a drawable instance */
 void destroy_drawable (drawable_t *drawable);
 
 /* instantiate a drawable */
 drawable_t *create_drawable (void *data,
                              drawable_draw_method_t *draw,
+                             drawable_inside_method_t *inside,
                              drawable_destructor_t *destroy);
 
 
@@ -63,6 +73,9 @@ typedef struct drawable_shape_t {
 
 /* draw a drawable shape */
 void draw_drawable_shape (drawable_t *drawable, cairo_t *cairo, double time);
+
+/* whether a point is inside a drawable shape */
+bool inside_drawable_shape (drawable_t *drawable, vec2_t point);
 
 /* free a drawable shape instance */
 void destroy_drawable_shape (drawable_t *drawable);
@@ -100,6 +113,9 @@ void group_remove_all_drawables (drawable_t *group);
 /* draw a drawable group */
 void draw_drawable_group (drawable_t *drawable, cairo_t *cairo, double time);
 
+/* whether a point is inside a drawable group */
+bool inside_drawable_group (drawable_t *drawable, vec2_t point);
+
 /* free a drawable group instance */
 void destroy_drawable_group (drawable_t *drawable);
 
@@ -129,6 +145,9 @@ typedef struct drawable_svg_t {
 /* draw a drawable svg */
 void draw_drawable_svg (drawable_t *drawable, cairo_t *cairo, double time);
 
+/* whether a point is inside a drawable svg */
+bool inside_drawable_svg (drawable_t *drawable, vec2_t point);
+
 /* free a drawable svg instance */
 void destroy_drawable_svg (drawable_t *drawable);
 
@@ -155,6 +174,9 @@ typedef struct drawable_text_t {
 
 /* draw a drawable text */
 void draw_drawable_text (drawable_t *drawable, cairo_t *cairo, double time);
+
+/* whether a point is inside a drawable text */
+bool inside_drawable_text (drawable_t *drawable, vec2_t point);
 
 /* free a drawable text instance */
 void destroy_drawable_text (drawable_t *drawable);
